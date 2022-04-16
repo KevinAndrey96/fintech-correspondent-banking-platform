@@ -14,14 +14,16 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_product', function (Blueprint $table) {
+            $table->engine="InnoDB";
             $table->id();
-            $table->bigInteger('shopkeeper_id');
+            /*$table->bigInteger('shopkeeper_id');
             $table->foreign('shopkeeper_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('product_id');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->String('shopkeeper_quota');
+            $table->String('shopkeeper_quota');*/
             $table->timestamps();
-        });
+
+            });
     }
 
     /**
