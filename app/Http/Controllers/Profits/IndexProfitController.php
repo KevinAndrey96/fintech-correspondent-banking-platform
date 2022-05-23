@@ -3,14 +3,21 @@
 namespace App\Http\Controllers\Profits;
 
 use App\Models\Profit;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class IndexProfitController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $profitsData['profits'] = Profit::all();
-        return view('profit.index',$profitsData);
+        if (Auth::user()->role == 'Administrator') {
+            $profitsData['profits'] = Profit::all()->sortByDesc('created_at');
+        }
+        if (Auth::user()->role != 'Administrator') {
+            $profitsData['profits'] = Profit::where('user_id', '=', Auth::user()->id)->orderBy('created_at', 'desc')->get();
+        }
+        return view('profit.index', $profitsData);
     }
 }
