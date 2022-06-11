@@ -12,10 +12,10 @@ class ExcelExportTransactionController extends Controller
 {
     public function export(Request $request)
     {
-        $date = $request->input('date');
-        $date = Carbon::parse($date);
-        $year = $date->year;
-        $month = $date->month;
-        return (new TransactionsExport)->forYear($year)->forMonth($month)->download('transactions.xlsx');
+        $dateFrom = $request->input('dateFrom');
+        $dateTo = $request->input('dateTo');
+        $dateFrom = Carbon::parse($dateFrom);
+        $dateTo = Carbon::parse($dateTo);
+        return (new TransactionsExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->download('Transacciones-desde-'.$dateFrom->format('d-m-Y').'-hasta-'.$dateTo->format('d-m-Y').'.xlsx');
     }
 }
