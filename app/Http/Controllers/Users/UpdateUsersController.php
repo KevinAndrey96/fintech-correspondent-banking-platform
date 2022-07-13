@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -37,7 +38,7 @@ class UpdateUsersController extends Controller
             /**
              * We reset the 2FA code to set a new in the login
              */
-            $user->google2fa_secret = "***REMOVED***";
+            $user->google2fa_secret = LoginController::GENERIC_SECRET_KEY;
         }
         $user->save();
 
