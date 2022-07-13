@@ -37,11 +37,10 @@ class UpdateUsersController extends Controller
             /**
              * We reset the 2FA code to set a new in the login
              */
-            $user->google2fa_secret = str_replace('=', '', RegisterController::GENERIC_2FA_SECRET);
+            $user->google2fa_secret = "***REMOVED***";
         }
-        dd(RegisterController::GENERIC_2FA_SECRET);
-
         $user->save();
+        dd($user);
         $user->google2fa_secret = str_replace('=', '', $user->google2fa_secret);
         $user->save();
         if (Auth::user()->role == 'Administrator' && $user->role == 'Shopkeeper') {
