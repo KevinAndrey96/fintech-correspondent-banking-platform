@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    public const GENERIC_2FA_SECRET = '***REMOVED***=';
+    public const GENERIC_2FA_SECRET = '***REMOVED***';
 
     /*
     |--------------------------------------------------------------------------
