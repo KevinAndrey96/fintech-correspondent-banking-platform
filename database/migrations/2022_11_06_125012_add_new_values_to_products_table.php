@@ -20,15 +20,6 @@ return new class extends Migration
             $table->integer('num_jineteo');
             $table->integer('hours');
             $table->longText('product_description')->change();
-
-            /*
-            $table->dropColumn('min_amount');
-            $table->dropColumn('max_amount');
-            $table->dropColumn('priority');
-            $table->dropColumn('description');
-            $table->dropColumn('num_jineteo');
-            $table->dropColumn('hours');
-            */
         });
     }
 
