@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('enabled_daily')->nullable();
+            $table->boolean('enabled_daily')->nullable()->default(1);
         });
     }
 
