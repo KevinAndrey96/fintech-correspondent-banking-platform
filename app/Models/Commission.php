@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 use App\Models\User;
 
+/**
+ * @property mixed $product_id
+ * @property mixed $amount
+ * @property mixed $user_id
+ * @method static where(string $string)
+ */
 class Commission extends Model
 {
     use HasFactory;

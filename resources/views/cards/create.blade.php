@@ -34,10 +34,14 @@
                                         <input style="border: gray 0.5px solid; border-radius: 20px" type="file" class="form-control form-control-sm" name="cardIMG" value="" id="cardIMG" required>
                                     </div>
                                     <div class="col-md-6 mb-5">
+                                        <label for="cardIMG" >Seleccione una imagen con el QR:</label>
+                                        <input style="border: gray 0.5px solid; border-radius: 20px" type="file" class="form-control form-control-sm" name="qrIMG" value="" id="qrIMG" required>
+                                    </div>
+                                    <div class="col-md-6 mb-5">
                                         <label for="cardPDF" >Seleccione un pdf con la tarjeta:</label>
                                         <input style="border: gray 0.5px solid; border-radius: 20px" type="file" class="form-control form-control-sm" name="cardPDF" value="" id="cardPDF" required>
                                     </div>
-                                    <div class="col-md-6 mb-5">
+                                    <div class="col-md-6 mt-4 mb-5">
                                         <div class="input-group input-group-outline mb-3">
                                             <label class="form-label">Banco</label>
                                             <input id="bank" type="text" class="form-control" name="bank" required>

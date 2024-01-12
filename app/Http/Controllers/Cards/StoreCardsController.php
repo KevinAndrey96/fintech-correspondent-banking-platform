@@ -16,6 +16,7 @@ class StoreCardsController extends Controller
         $fields = [
             'cardIMG'=>'required|mimes:jpg,jpeg,png',
             'cardPDF'=>'required|mimes:pdf',
+            'qrIMG' => 'required|mimes:jpg,jpeg,png',
             'bank'=>'required'
         ];
         $message = [
@@ -88,6 +89,37 @@ class StoreCardsController extends Controller
             $card->cardIMG = '/storage/card_img/' . $card->id . '.png';
             $card->save();
             unlink(str_replace('\\', '/', storage_path('app/public/card_img/'.$card->id.'.png')));
+        }
+
+        if ($request->hasFile('qrIMG')) {
+            $pathName = sprintf('card_qr_img/%s.png', $card->id);
+            Storage::disk('public')->put($pathName, file_get_contents($request->file('qrIMG')));
+            $client = new Client();
+            $urlServer = getenv('URL_SERVER');
+            $url = $urlServer."/upload.php";
+            $client->request(RequestAlias::METHOD_POST, $url, [
+                'multipart' => [
+                    [
+                        'name' => 'image',
+                        'contents' => fopen(
+                            str_replace(
+                                '\\',
+                                '/',
+                                Storage::path('public\card_qr_img\\' . $card->id . '.png')
+                            ),
+                            'r'
+                        )
+                    ],
+                    [
+                        'name' => 'path',
+                        'contents' => 'card_qr_img'
+                    ]
+                ]
+            ]);
+
+            $card->qr_img = '/storage/card_qr_img/' . $card->id . '.png';
+            $card->save();
+            unlink(str_replace('\\', '/', storage_path('app/public/card_qr_img/'.$card->id.'.png')));
         }
 
         return redirect()->route('cards')->with('cardCreationSuccess', 'Creación de tarjeta de recaudo satisfactoria');
