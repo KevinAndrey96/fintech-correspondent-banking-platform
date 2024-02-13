@@ -38,15 +38,20 @@ class StoreGroupCommissionsController extends Controller
             return intval($value);
         });
 
-        $amounts = Arr::map($request->input('amounts'), function ($value) {
+        $amountsDis = Arr::map($request->input('amountsDis'), function ($value) {
+            return floatval($value);
+        });
+
+        $amountsShop = Arr::map($request->input('amountsShop'), function ($value) {
             return floatval($value);
         });
 
         //If exists a commission amount that exceeded its correspondent product commission amount it will return to
         //create commissions group with error message
-        for ($i = 0; $i < count($amounts); $i++) {
+        for ($i = 0; $i < count($amountsDis); $i++) {
             $product = Product::find($products[$i]);
-            if ($amounts[$i] > $product->product_commission) {
+            if ($amountsDis[$i] > $product->product_commission || $amountsShop[$i] > $product->product_commission ||
+                $amountsDis[$i] + $amountsShop[$i] > $product->product_commission ) {
 
                 return redirect()->route('commissions.create-group')->with('notAllowedAmount', 'Monto de comisión no permitido');
             }
@@ -64,7 +69,8 @@ class StoreGroupCommissionsController extends Controller
         for ($i = 0; $i < count($products); $i++) {
             $generalCommission = new GeneralCommission();
             $generalCommission->product_id = $products[$i];
-            $generalCommission->amount = $amounts[$i];
+            $generalCommission->amount_dis= $amountsDis[$i];
+            $generalCommission->amount_shop = $amountsShop[$i];
             $generalCommission->save();
 
             $commGPGralComm = new CommissionsGroupGeneralCommission();
