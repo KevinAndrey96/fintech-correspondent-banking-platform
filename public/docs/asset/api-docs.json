@@ -1,57 +1,87 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Título prueba",
-        "description": "Descripcion",
+        "title": "User Login",
+        "description": "Here is endpoint to login user",
         "version": "1.0"
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000"
+            "url": "https://testing.asparecargas.net"
         }
     ],
     "paths": {
-        "api/v1/user/login": {
+        "/api/v1/user/login": {
             "post": {
                 "tags": [
-                    "Usuario"
+                    "Login"
                 ],
-                "summary": "Logueo de usuario",
-                "operationId": "501fb1ad6ffe47f9ef7f7d77d23f178f",
+                "summary": "User Login",
+                "operationId": "f8cb634ff438083cd231d25a056e3497",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "Success Login",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "rows": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "number",
-                                                        "example": "1"
-                                                    },
-                                                    "nombres": {
-                                                        "type": "string",
-                                                        "example": "Aderson Felix"
-                                                    },
-                                                    "apellidos": {
-                                                        "type": "string",
-                                                        "example": "Jara Lazaro"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "example": "2023-02-23T00:09:16.000000Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "example": "2023-02-23T12:33:45.000000Z"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Success Login"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "***REMOVED***"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid Credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden Access",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Forbidden Access"
                                         }
                                     },
                                     "type": "object"
