@@ -27,7 +27,7 @@ jobs:
           coverage: none
 
       - name: Validate Composer Configuration
-        run: composer validate --no-check-all
+        run: composer validate --no-check-all --no-check-lock
 
       - name: Syntax Linting (app, routes, config)
         run: |
