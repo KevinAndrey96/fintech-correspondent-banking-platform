@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
+    "name": "kevinandrey/fintech-correspondent-banking-platform",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Fintech and Correspondent Banking Network Platform for Neighborhood Merchants (Nequi, Daviplata, Bancolombia, Cash-in/Cash-out, WebSockets, Real-time Ledgers).",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {

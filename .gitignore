@@ -1,7 +1,39 @@
-.idea
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Environment & Cache
 .env
-
-
+.env.backup
+.env.production
+.phpunit.result.cache
+.rnd
 
 # Dependencies
-node_modules/
+/vendor/
+/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel Storage & Cache
+/public/storage
+/public/hot
+/storage/*.key
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!/storage/framework/cache/data/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+!/storage/logs/.gitignore
+
+# Local Docker Data
+docker/data/
+docker/mysql/
