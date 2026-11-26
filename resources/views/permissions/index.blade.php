@@ -118,7 +118,7 @@
         $(document).ready(function(){
             $('#my_table').DataTable({
                 ajax: {
-                    "url": "{{config('app.url')}}/api/get-all-permissions",
+                    "url": "{{getenv('APP_URL')}}/api/get-all-permissions",
                     "debug": true,
                 },
                 columns: [
@@ -274,7 +274,7 @@
         function setEditFields(id)
         {
             $.ajax({
-                url: '{{config('app.url')}}/api/get-permission-register/'+id,
+                url: '{{getenv('APP_URL')}}/api/get-permission-register/'+id,
                 type: 'GET',
                 success: function(response) {
                     $('#nameEdit').val(response.data.attributes.name);

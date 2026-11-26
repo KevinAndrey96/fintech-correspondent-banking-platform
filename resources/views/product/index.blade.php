@@ -227,7 +227,7 @@
                                                             </div>
                                                        </div>
                                                        <div class="row pb-2">
-                                                           @if (config('platform.country_name') == 'ECUADOR')
+                                                           @if (getenv('COUNTRY_NAME') == 'ECUADOR')
                                                            <div class="col-xl-6 col-sm-4 mb-xl-0 pb-3">
                                                                <div class="card">
                                                                    <div class="card-header p-0 ">

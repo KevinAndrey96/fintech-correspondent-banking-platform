@@ -65,8 +65,8 @@
                                         <td class="align-middle text-center text-sm">
                                             @if(isset($profit->boucher))
                                             <div>
-                                                <a class="image-link" href="{{config('services.media_mirror.url') }}{{$profit->boucher }}">
-                                                    <img style="border: 1px solid #010101;" class="avatar avatar-sm rounded-circle " src="{{config('services.media_mirror.url')}}{{$profit->boucher }}" alt="No carga">
+                                                <a class="image-link" href="{{getenv('URL_SERVER') }}{{$profit->boucher }}">
+                                                    <img style="border: 1px solid #010101;" class="avatar avatar-sm rounded-circle " src="{{getenv('URL_SERVER')}}{{$profit->boucher }}" alt="No carga">
                                                 </a>
                                             </div>
                                             @endif

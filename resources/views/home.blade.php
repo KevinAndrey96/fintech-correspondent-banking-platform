@@ -827,8 +827,8 @@
                                             <div class="col-md-3 m-2 ms-auto me-auto d-flex w-20">
                                                 <div class="card card-profile p-0 m-0">
                                                     <div class="position-relative">
-                                                        <a class="image-link" href="{{config('services.media_mirror.url').$value->publicity_url}}">
-                                                            <img src="{{config('services.media_mirror.url').$value->publicity_url}}" alt="Image placeholder" class="card-img-top">
+                                                        <a class="image-link" href="{{getenv('URL_SERVER').$value->publicity_url}}">
+                                                            <img src="{{getenv('URL_SERVER').$value->publicity_url}}" alt="Image placeholder" class="card-img-top">
                                                         </a>
                                                     </div>
                                                     <div class="card-body text-center border-0 p-0">
@@ -1293,7 +1293,7 @@
                 $.ajax({
                     type: 'POST',
                     data: data,
-                    url: '{{config('app.url')}}/api/get-statistics-data',
+                    url: '{{getenv('APP_URL')}}/api/get-statistics-data',
                     success: function(response) {
                         $('#failedTransactionsTitle').text(response.data.attributes.failedTransactions);
                         $('#successTransactionsTitle').text(response.data.attributes.successTransactions);

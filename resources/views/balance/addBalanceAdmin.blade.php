@@ -36,7 +36,7 @@
                 <label for="image"> Recibo </label>
                 @if(isset($balance->boucher))
                 </br>
-                <img class="img-thumbnail img-fluid" src="{{ config('services.media_mirror.url').'/'.$balance->boucher }}" width="100" alt = "No carga">
+                <img class="img-thumbnail img-fluid" src="{{ 'https://corresponsales.asparecargas.net/'.$balance->boucher }}" width="100" alt = "No carga">
                 </br>
                 @endif
                 <input style="border: gray 0.5px solid; border-radius: 20px;" type="file" class="form-control form-control-sm" name="image" value="" id="image">
