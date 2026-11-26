@@ -15,8 +15,6 @@ use Illuminate\Http\RedirectResponse;
 
 class LoginController extends Controller
 {
-    public const GENERIC_SECRET_KEY = "***REMOVED***";
-
     /*
     |--------------------------------------------------------------------------
     | Login Controller
