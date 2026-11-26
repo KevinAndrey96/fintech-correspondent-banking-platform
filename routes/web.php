@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TwoFAController;
-use App\Http\Middleware\IsenabledMiddleware;
-use App\Http\Middleware\TransactionsMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 /*
 Route::get('/', function () {
     return view('auth.login');
@@ -29,12 +23,11 @@ Route::get('/', function () {
 
 Route::get('/', App\Http\Controllers\Users\PersonalizeLoginUserController::class);
 
-Auth::routes();
+Auth::routes(['register' => false]);
 Route::impersonate();
 
-
-//'disable2fa'
-Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorized']], static function() {
+// 'disable2fa'
+Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorized']], static function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])
         ->name('home')
         ->middleware('distributorExtrainfo', '2fa', 'firstPassword', 'dailyPassword');
@@ -48,7 +41,7 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::get('/products-transactions-excel/{id}', [App\Http\Controllers\Products\TransactionsProductController::class, 'transactions']);
     Route::get('/delete-product/{id}', App\Http\Controllers\Products\DeleteProductController::class)->name('product.delete');
 
-    //Routes for translations
+    // Routes for translations
     Route::get('/translations', App\Http\Controllers\Translations\IndexTranslationsController::class)->name('translations.index');
     Route::get('/product-fields', App\Http\Controllers\Products\FieldsProductsController::class)->name('product.fields');
     Route::get('/product-fields-edit', App\Http\Controllers\Products\EditFieldsProductsController::class)->name('product.fields-edit');
@@ -57,7 +50,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::get('/transactions-fields-edit', App\Http\Controllers\Transactions\EditFieldsTransactionsController::class)->name('transactions.fields-edit');
     Route::post('/transactions-fields-store', App\Http\Controllers\Transactions\StoreFieldsTransactionsController::class)->name('transactions.fields-store');
     Route::get('/keywords', App\Http\Controllers\Translations\IndexKeywordsController::class)->name('keywords.index');
-
 
     Route::get('/balance', [App\Http\Controllers\Balances\IndexBalanceController::class, 'index']);
     Route::get('/balance/create', [App\Http\Controllers\Balances\CreateBalanceController::class, 'create']);
@@ -73,7 +65,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::post('/balance-store-assignment', App\Http\Controllers\Balances\StoreAssignmentBalanceController::class)->name('balance.store-assignment');
     Route::get('/balance-detail-pdf/{id}', App\Http\Controllers\Balances\DetailPDFBalancesController::class)->name('balance.detail-pdf');
 
-
     Route::get('/profit', [App\Http\Controllers\Profits\IndexProfitController::class, 'index']);
     Route::get('/profit/create', [App\Http\Controllers\Profits\CreateProfitController::class, 'create']);
     Route::post('/profit/store', [App\Http\Controllers\Profits\WithdrawProfitController::class, 'store']);
@@ -82,7 +73,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::post('/profit/validate', [App\Http\Controllers\Profits\ValidateWithdrawProfitController::class, 'isValid']);
     Route::post('/profit/excel', [App\Http\Controllers\Profits\ExcelExportProfitController::class, 'export']);
 
-
     Route::get('/transactions', [App\Http\Controllers\Transactions\IndexTransactionController::class, 'index']);
     Route::get('/transactions/create', [App\Http\Controllers\Transactions\CreateTransactionController::class, 'create'])->middleware('requestDailyPassword');
     Route::get('/giros/create', [App\Http\Controllers\Transactions\CreateGirosTransactionController::class, 'create']);
@@ -90,7 +80,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::post('/transaction/storeClientData', [App\Http\Controllers\Transactions\AddClientDataController::class, 'store']);
     Route::get('/transaction/cancel/{id}', [App\Http\Controllers\Transactions\CancelTransactionController::class, 'cancel']);
     Route::post('/transaction/excel', [App\Http\Controllers\Transactions\ExcelExportTransactionController::class, 'export']);
-
 
     Route::get('/users', [App\Http\Controllers\Users\IndexUsersController::class, 'index']);
     Route::get('/user/create', [App\Http\Controllers\Users\CreateUsersController::class, 'create']);
@@ -119,8 +108,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     Route::post('/user-enable-dev-mode', App\Http\Controllers\Users\EnableDevModeUsersController::class)
         ->name('users.enableDevMode');
 
-
-
     Route::get('/commissions', [App\Http\Controllers\Commissions\IndexCommissionsController::class, 'index'])->name('commissions.index');
     Route::get('/commissions/users', [App\Http\Controllers\Commissions\UsersCommissionsController::class, 'usersCommissions']);
     Route::get('/commissions/create/{id}', [App\Http\Controllers\Commissions\CreateCommissionsController::class, 'create']);
@@ -137,7 +124,6 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
     /**
      * Routes for cards
      */
-
     Route::get('/cards-create', App\Http\Controllers\Cards\ConfigCardsController::class)
         ->name('cards.create');
     Route::post('/cards-store', App\Http\Controllers\Cards\StoreCardsController::class)
@@ -152,206 +138,171 @@ Route::group(['middleware' => ['auth', 'transactions', 'isenabled', 'isAuthorize
         ->name('cards.delete');
 });
 
-Route::post('/changeOnlineStatusUser', [App\Http\Controllers\Users\ChangeOnlineStatusUsersController::class, 'changeOnlineStatus'])->middleware('auth');
-Route::get('/transactionLoad/{id}', [App\Http\Controllers\Transactions\LoadTransactionController::class, 'load'])->middleware('auth');
-Route::get('/transactionReasign', [App\Http\Controllers\Transactions\ReasignTransactionController::class, 'transactionReasign'])->middleware('auth');
-Route::get('/transaction/detail/{id}', [App\Http\Controllers\Transactions\DetailTransactionController::class, 'detail'])->middleware('auth');
-Route::post('/transaction/update', [App\Http\Controllers\Transactions\UpdateTransactionController::class, 'update'])->middleware('auth');
-Route::get('/transaction/cancel/{id}', [App\Http\Controllers\Transactions\CancelTransactionController::class, 'cancel']);
-Route::get('/transaction/detail-pdf/{id}', [App\Http\Controllers\Transactions\DetailTransactionPDFController::class, 'detailPDF']);
-Route::get('/transactions-transfer/{id}',
-    App\Http\Controllers\Transactions\TransferTransactionController::class)
-    ->name('transactions.transfer');
+Route::middleware('auth')->group(static function () {
+    Route::post('/changeOnlineStatusUser', [App\Http\Controllers\Users\ChangeOnlineStatusUsersController::class, 'changeOnlineStatus']);
+    Route::get('/transactionLoad/{id}', [App\Http\Controllers\Transactions\LoadTransactionController::class, 'load']);
+    Route::get('/transactionReasign', [App\Http\Controllers\Transactions\ReasignTransactionController::class, 'transactionReasign']);
+    Route::get('/transaction/detail/{id}', [App\Http\Controllers\Transactions\DetailTransactionController::class, 'detail']);
+    Route::post('/transaction/update', [App\Http\Controllers\Transactions\UpdateTransactionController::class, 'update']);
+    Route::get('/transaction/cancel/{id}', [App\Http\Controllers\Transactions\CancelTransactionController::class, 'cancel']);
+    Route::get('/transaction/detail-pdf/{id}', [App\Http\Controllers\Transactions\DetailTransactionPDFController::class, 'detailPDF']);
+    Route::get('/transactions-transfer/{id}', App\Http\Controllers\Transactions\TransferTransactionController::class)
+        ->name('transactions.transfer');
 
-/**
- * Middleware for 2FA
- */
-
-    Route::middleware(['2fa'])->group(function () {
+    Route::middleware(['2fa'])->group(static function () {
         Route::post('/2fa', static function () {
             return redirect(route('home'));
         })->name('2fa');
     });
 
+    /**
+     * Route for controller {@link TwoFAController} QR code view
+     */
+    Route::get('/complete-registration', [TwoFAController::class, 'index'])
+        ->name('complete.registration')
+        ->middleware('distributorExtrainfo');
 
-/**
- * Route for controller {@link TwoFAController} QR code view
- */
+    Route::get('/whatsapp-number-transaction', App\Http\Controllers\Transactions\NumberWhatsappTransactionController::class)
+        ->name('number.whatsapp');
 
-Route::get('/complete-registration', [TwoFAController::class, 'index'])->name('complete.registration')->middleware('distributorExtrainfo');
-Route::get('/complete-registration2', [RegisterController::class, 'fullRegister'])->name('complete.registration2');
+    Route::get('/daily-password', App\Http\Controllers\Users\DailyPasswordIndexUsersController::class)
+        ->name('users.daily.password.index');
+    Route::post('/daily-password', App\Http\Controllers\Users\DailyPasswordUsersController::class)
+        ->name('users.daily.password');
+    Route::get('/require-daily-password', App\Http\Controllers\Users\RequireDailyPasswordUsersController::class)
+        ->name('users.require.daily.password');
+    Route::post('/store-required-daily-password', App\Http\Controllers\Users\StoreDailyPasswordUsersController::class)
+        ->name('users.store.required.daily.password');
 
-/**
- *  Routes for whatsapp
- */
+    Route::get('/first-password', App\Http\Controllers\Users\FirstPasswordUsersController::class)
+        ->name('users.first.password');
+    Route::post('/store-first-password', App\Http\Controllers\Users\StoreFirstPasswordUsersController::class)
+        ->name('users.store.first.password');
 
-Route::get('/whatsapp-number-transaction',
-    App\Http\Controllers\Transactions\NumberWhatsappTransactionController::class)
-          ->name('number.whatsapp');
+    Route::get('/extrainfo', App\Http\Controllers\Users\DistributorExtrainfoUsersController::class)
+        ->name('distributor.extrainfo');
+    Route::post('/store-distributor-extrainfo', App\Http\Controllers\Users\StoreDistributorExtrainfoUsersController::class)
+        ->name('store.distributor.extrainfo');
 
-/**
- *  Routes for banners
- */
+    Route::get('/chat/{id}', App\Http\Controllers\Chats\indexChatsController::class)
+        ->name('chat');
 
-Route::get('/banners', App\Http\Controllers\Banners\indexBannersController::class)
-    ->name('banners.index');
-Route::get('/banners-create', App\Http\Controllers\Banners\CreateBannersController::class)
-    ->name('banners.create');
-Route::post('/banners-store', App\Http\Controllers\Banners\StoreBannersController::class)
-    ->name('banners.store');
-Route::get('/banners-edit/{id}', App\Http\Controllers\Banners\EditBannersController::class)
-    ->name('banners.edit');
-Route::post('/banners-update', App\Http\Controllers\Banners\UpdateBannersController::class)
-    ->name('banners.update');
-Route::get('/banners-delete/{id}', App\Http\Controllers\Banners\DeleteBannersController::class)
-    ->name('banners.delete');
+    Route::get('/publicity-download/{id}', App\Http\Controllers\Publicity\DownloadPublicityController::class)
+        ->name('publicity.download');
 
-/**
- * Routes for top shopkeepers
- */
+    Route::middleware('can:Ver top tenderos')->group(static function () {
+        Route::get('/shopkeepers-top-date', App\Http\Controllers\Users\ShopkeepersTopDateUsersController::class)
+            ->name('shopkeeper.top.date');
+        Route::post('/shopkeepers-top', App\Http\Controllers\Users\ShopkeepersTopUsersController::class)
+            ->name('shopkeeper.top');
+    });
 
-Route::get('/shopkeepers-top-date', App\Http\Controllers\Users\ShopkeepersTopDateUsersController::class)
-    ->name('shopkeeper.top.date');
-Route::post('/shopkeepers-top', App\Http\Controllers\Users\ShopkeepersTopUsersController::class)
-    ->name('shopkeeper.top');
+    Route::middleware('can:Ver usuarios')->group(static function () {
+        Route::get('/assign-products/{id}', App\Http\Controllers\Products\AssignProductsController::class)
+            ->name('product.assign');
+        Route::post('/store-assignments-products', App\Http\Controllers\Products\StoreAssignmentsProductsController::class)
+            ->name('product.store.assignments');
+        Route::post('/change-authorized-user', App\Http\Controllers\Users\AuthorizeShopkeeperUserController::class)
+            ->name('users.shopkeeper.authorized');
+    });
 
-/**
- * Routes to assign products to suppliers
- */
+    Route::middleware('can:Ver footer administador')->group(static function () {
+        Route::get('/platform-lock-index', App\Http\Controllers\Platforms\LockIndexPlatformController::class)
+            ->name('platform.lock.index');
+        Route::post('/platform-lock', App\Http\Controllers\Platforms\LockPlatformController::class)
+            ->name('platform.lock');
+    });
 
-Route::get('/assign-products/{id}', App\Http\Controllers\Products\AssignProductsController::class)
-    ->name('product.assign');
-Route::post('/store-assignments-products', App\Http\Controllers\Products\StoreAssignmentsProductsController::class)
-    ->name('product.store.assignments');
+    Route::middleware('can:Ver configuracion')->group(static function () {
+        Route::get('/banners', App\Http\Controllers\Banners\indexBannersController::class)
+            ->name('banners.index');
+        Route::get('/banners-create', App\Http\Controllers\Banners\CreateBannersController::class)
+            ->name('banners.create');
+        Route::post('/banners-store', App\Http\Controllers\Banners\StoreBannersController::class)
+            ->name('banners.store');
+        Route::get('/banners-edit/{id}', App\Http\Controllers\Banners\EditBannersController::class)
+            ->name('banners.edit');
+        Route::post('/banners-update', App\Http\Controllers\Banners\UpdateBannersController::class)
+            ->name('banners.update');
+        Route::get('/banners-delete/{id}', App\Http\Controllers\Banners\DeleteBannersController::class)
+            ->name('banners.delete');
 
-/**
- * Route to authorize shopkeepers on the platform
- */
+        Route::get('/answers', App\Http\Controllers\Answers\IndexAnswersController::class)
+            ->name('answers.index');
+        Route::get('/answers-create', App\Http\Controllers\Answers\CreateAnswersController::class)
+            ->name('answers.create');
+        Route::post('/answers-store', App\Http\Controllers\Answers\StoreAnswersController::class)
+            ->name('answers.store');
+        Route::get('/answers-delete/{id}', App\Http\Controllers\Answers\DeleteAnswersController::class)
+            ->name('answers.delete');
 
-Route::post('/change-authorized-user', App\Http\Controllers\Users\AuthorizeShopkeeperUserController::class)
-    ->name('users.shopkeeper.authorized');
+        Route::get('/publicity', App\Http\Controllers\Publicity\IndexPublicityController::class)
+            ->name('publicity.index');
+        Route::get('/publicity-create', App\Http\Controllers\Publicity\CreatePublicityController::class)
+            ->name('publicity.create');
+        Route::post('/publicity-store', App\Http\Controllers\Publicity\StorePublicityController::class)
+            ->name('publicity.store');
+        Route::get('/publicity-delete/{id}', App\Http\Controllers\Publicity\DeletePublicityController::class)
+            ->name('publicity.delete');
 
-/**
- * Routes to lock platform
- */
+        Route::get('/exchanges', App\Http\Controllers\Exchanges\IndexExchangesController::class)
+            ->name('exchanges.index');
+        Route::get('/exchanges-edit/{id}', App\Http\Controllers\Exchanges\EditExchangesController::class)
+            ->name('exchanges.edit');
+        Route::post('/exchanges-update', App\Http\Controllers\Exchanges\UpdateExchangesController::class)
+            ->name('exchanges.update');
 
-Route::get('/platform-lock-index', App\Http\Controllers\Platforms\LockIndexPlatformController::class)
-    ->name('platform.lock.index');
+        Route::get('/brands', App\Http\Controllers\Brands\IndexBrandsController::class)
+            ->name('brands.index');
+        Route::get('/brands-create', App\Http\Controllers\Brands\CreateBrandsController::class)
+            ->name('brands.create');
+        Route::post('/brands-store', App\Http\Controllers\Brands\StoreBrandsController::class)
+            ->name('brands.store');
+        Route::get('/brands-edit/{id}', App\Http\Controllers\Brands\EditBrandsController::class)
+            ->name('brands.edit');
+        Route::post('/brands-update', App\Http\Controllers\Brands\UpdateBrandsController::class)
+            ->name('brands.update');
+    });
 
-Route::post('/platform-lock', App\Http\Controllers\Platforms\LockPlatformController::class)
-    ->name('platform.lock');
+    Route::middleware('can:Ver roles y permisos')->group(static function () {
+        Route::get('/roles', App\Http\Controllers\Roles\IndexRolesController::class)
+            ->name('roles.index');
+        Route::get('/permissions', App\Http\Controllers\Permissions\IndexPermissionsController::class)
+            ->name('permissions.index');
+    });
 
-/**
- * Route for daily password view
- */
+    /**
+     * Session-authenticated endpoints consumed by the dashboard through AJAX.
+     */
+    Route::prefix('api')->group(static function () {
+        Route::get('/getStatus/{id}', [App\Http\Controllers\GetstatusController::class, 'index']);
+        Route::post('/get-statistics-data', App\Http\Controllers\StatisticsDataController::class)
+            ->name('GetStatisticsData');
 
-Route::get('/daily-password', App\Http\Controllers\Users\DailyPasswordIndexUsersController::class)
-    ->name('users.daily.password.index');
+        Route::middleware('can:Ver roles y permisos')->group(static function () {
+            Route::post('/role-store', App\Http\Controllers\Roles\StoreRolesController::class)
+                ->name('roles.store');
+            Route::get('/get-all-roles', App\Http\Controllers\Roles\GetAllRolesController::class)
+                ->name('roles.getAll');
+            Route::get('/get-role-register/{id}', App\Http\Controllers\Roles\GetRegisterRolesController::class)
+                ->name('roles.getRegister');
+            Route::post('/role-update', App\Http\Controllers\Roles\UpdateRolesController::class)
+                ->name('roles.update');
+            Route::get('/get-all-and-assigned-permissions/{id}', App\Http\Controllers\Roles\GetAllAndAssignedPermissionsRolesController::class)
+                ->name('roles.getAllAndAssignedPermissions');
+            Route::post('/save-permission-assignments', App\Http\Controllers\Roles\SavePermissionAssignmentsRolesController::class)
+                ->name('roles.savePermissionAssignments');
 
-Route::post('/daily-password', App\Http\Controllers\Users\DailyPasswordUsersController::class)
-    ->name('users.daily.password');
-
-Route::get('/require-daily-password', App\Http\Controllers\Users\RequireDailyPasswordUsersController::class)
-    ->name('users.require.daily.password');
-
-Route::post('/store-required-daily-password', App\Http\Controllers\Users\StoreDailyPasswordUsersController::class)
-    ->name('users.store.required.daily.password');
-
-/**
- * Routes for first password
- */
-
-Route::get('/first-password', App\Http\Controllers\Users\FirstPasswordUsersController::class)
-    ->name('users.first.password');
-
-Route::post('/store-first-password', App\Http\Controllers\Users\StoreFirstPasswordUsersController::class)
-    ->name('users.store.first.password');
-
-/**
- * Routes for distributor extra info
- */
-
-Route::get('/extrainfo', App\Http\Controllers\Users\DistributorExtrainfoUsersController::class)
-    ->name('distributor.extrainfo');
-
-Route::post('/store-distributor-extrainfo', App\Http\Controllers\Users\StoreDistributorExtrainfoUsersController::class)
-    ->name('store.distributor.extrainfo');
-
-/**
- * Routes for preloaded answers
- */
-
-Route::get('/answers', App\Http\Controllers\Answers\IndexAnswersController::class)
-    ->name('answers.index');
-Route::get('/answers-create', App\Http\Controllers\Answers\CreateAnswersController::class)
-    ->name('answers.create');
-Route::post('/answers-store', App\Http\Controllers\Answers\StoreAnswersController::class)
-    ->name('answers.store');
-Route::get('/answers-delete/{id}', App\Http\Controllers\Answers\DeleteAnswersController::class)
-    ->name('answers.delete');
-
-/**
- * Routes for chats
- */
-
-Route::get('/chat/{id}', App\Http\Controllers\Chats\indexChatsController::class)
-    ->name('chat');
-
-/**
- * Routes for publicity
- */
-
-Route::get('/publicity', App\Http\Controllers\Publicity\IndexPublicityController::class)
-    ->name('publicity.index');
-Route::get('/publicity-create', App\Http\Controllers\Publicity\CreatePublicityController::class)
-    ->name('publicity.create');
-Route::post('/publicity-store', App\Http\Controllers\Publicity\StorePublicityController::class)
-    ->name('publicity.store');
-Route::get('/publicity-delete/{id}', App\Http\Controllers\Publicity\DeletePublicityController::class)
-    ->name('publicity.delete');
-Route::get('/publicity-download/{id}', App\Http\Controllers\Publicity\DownloadPublicityController::class)
-    ->name('publicity.download');
-
-/**
- * Routes for Exchange
- */
-
-Route::get('/exchanges', App\Http\Controllers\Exchanges\IndexExchangesController::class)
-    ->name('exchanges.index');
-Route::get('/exchanges-edit/{id}', App\Http\Controllers\Exchanges\EditExchangesController::class)
-    ->name('exchanges.edit');
-Route::post('/exchanges-update', App\Http\Controllers\Exchanges\UpdateExchangesController::class)
-    ->name('exchanges.update');
-
-/**
- * Routes for brands
- */
-
-Route::get('/brands', App\Http\Controllers\Brands\IndexBrandsController::class)
-    ->name('brands.index');
-Route::get('/brands-create', App\Http\Controllers\Brands\CreateBrandsController::class)
-    ->name('brands.create');
-Route::post('/brands-store', App\Http\Controllers\Brands\StoreBrandsController::class)
-    ->name('brands.store');
-Route::get('/brands-edit/{id}', App\Http\Controllers\Brands\EditBrandsController::class)
-    ->name('brands.edit');
-Route::post('/brands-update', App\Http\Controllers\Brands\UpdateBrandsController::class)
-    ->name('brands.update');
-
-/**
- * Routes for roles and permissions
- */
-
-//Roles
-Route::get('/roles', App\Http\Controllers\Roles\IndexRolesController::class)
-    ->name('roles.index');
-
-//Permissions
-Route::get('/permissions', App\Http\Controllers\Permissions\IndexPermissionsController::class)
-    ->name('permissions.index');
-
-
-
-
-
-
+            Route::get('/get-all-permissions', App\Http\Controllers\Permissions\GetAllPermissionsController::class)
+                ->name('permissions.getAll');
+            Route::post('/permission-store', App\Http\Controllers\Permissions\StorePermissionsController::class)
+                ->name('permissions.store');
+            Route::get('/get-permission-register/{id}', App\Http\Controllers\Permissions\GetRegisterPermissionsController::class)
+                ->name('permissions.getRegister');
+            Route::post('/permission-update', App\Http\Controllers\Permissions\UpdatePermissionsController::class)
+                ->name('permissions.update');
+            Route::post('/save-role-assignments', App\Http\Controllers\Permissions\SaveRoleAssignmentsPermissionsController::class)
+                ->name('permissions.saveRoleAssignments');
+        });
+    });
+});

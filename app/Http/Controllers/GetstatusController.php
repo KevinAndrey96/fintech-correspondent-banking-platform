@@ -2,65 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Transaction;
+use Illuminate\Http\Request;
 
 class GetstatusController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Return the transaction polled by the waiting screen, only to the users involved in it.
      */
-    public function index($id)
+    public function index(Request $request, $id)
     {
-        $transaction = Transaction::find($id);
+        $user = $request->user();
+        $transaction = Transaction::findOrFail($id);
+
+        $isParticipant = in_array($user->id, [
+            $transaction->shopkeeper_id,
+            $transaction->distributor_id,
+            $transaction->supplier_id,
+        ], false);
+
+        abort_unless($isParticipant || $user->role === 'Administrator', 404);
 
         return $transaction;
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="/assets/img/favicon1.png">
     <title>
@@ -16,6 +17,9 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!--JQuery-->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+    </script>
     <!--JQuery maskedinput-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
     <!--Highcharts-->
@@ -51,7 +55,7 @@
     <div class="sidenav-header text-center p-2">
         <a class="text-center p-3" href="/home">
             @if (isset(Auth::user()->brand_id))
-                <img style="margin-top: -3px;" src="{{getenv('URL_SERVER').Auth::user()->brand->square_logo_url}}" height="auto" width="30%" class="text-center" alt="main_logo" >
+                <img style="margin-top: -3px;" src="{{config('services.media_mirror.url').Auth::user()->brand->square_logo_url}}" height="auto" width="30%" class="text-center" alt="main_logo" >
                     @else
                 <img style="margin-top: -3px;" src="/assets/img/favicon1.png" height="auto" width="30%" class="text-center" alt="main_logo" >
                             @endif
@@ -162,7 +166,7 @@
                                 <span class="nav-link-text ms-1">Publicidad</span>
                             </a>
                         </li>
-                        @if (getenv('COUNTRY_NAME') == 'ECUADOR')
+                        @if (config('platform.country_name') == 'ECUADOR')
                         <li class="nav-item">
                             <a class="nav-link text-white " href="{{route('exchanges.index')}}">
                                 <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -303,7 +307,7 @@
                                     <span class="nav-link-text ms-1">Nueva Transacción</span>
                                 </a>
                             </li>
-                            @if (getenv('COUNTRY_NAME') == 'ECUADOR')
+                            @if (config('platform.country_name') == 'ECUADOR')
                                 <li class="nav-item">
                                     <a class="nav-link text-white " href="/giros/create?giros=1">
                                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -500,7 +504,7 @@
             @endif
             @if (auth()->user()->can('Ver contactar distribuidor') && isset(Auth::user()->distributor))
                 <li class="nav-item">
-                    <a class="nav-link text-white" target="_blank" href="https://api.whatsapp.com/send?phone={{(getenv('COUNTRY_NAME') == 'COLOMBIA')  ? '57'.Auth::user()->distributor->phone : '593'.Auth::user()->distributor->phone}} ">
+                    <a class="nav-link text-white" target="_blank" href="https://api.whatsapp.com/send?phone={{(config('platform.country_name') == 'COLOMBIA')  ? '57'.Auth::user()->distributor->phone : '593'.Auth::user()->distributor->phone}} ">
                         <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
                             <i class="material-icons opacity-10">payments</i>
                         </div>
@@ -511,7 +515,7 @@
         <!--endshopkeeper-->
 
         <!--supplier-->
-            @if (getenv('COUNTRY_NAME') == 'ECUADOR' && Auth::user()->giros == 1)
+            @if (config('platform.country_name') == 'ECUADOR' && Auth::user()->giros == 1)
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-7" aria-expanded="false" aria-controls="submenu-2">
                     <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -844,7 +848,7 @@
     </nav>
     @if(session('impersonated_by'))
         <div class="d-flex justify-content-center p-3">
-            <img style="margin-top: -3px;" src="{{getenv('URL_SERVER')}}/assets/img/phantom_mode.png" height="auto" width="30%" class="text-center" alt="main_logo" >
+            <img style="margin-top: -3px;" src="{{config('services.media_mirror.url')}}/assets/img/phantom_mode.png" height="auto" width="30%" class="text-center" alt="main_logo" >
         </div>
     @endif
     <!-- End Navbar -->
@@ -859,17 +863,17 @@
                                 @foreach(App\Models\Banner::all() as $banner)
                                     @if ($banner->id == App\Models\Banner::first()->id)
                                         <div class="carousel-item active">
-                                            <img class="d-block w-100 rounded img-fluid" src="{{getenv('URL_SERVER').$banner->banner_url}}">
+                                            <img class="d-block w-100 rounded img-fluid" src="{{config('services.media_mirror.url').$banner->banner_url}}">
                                         </div>
                                     @else
                                         <div class="carousel-item">
-                                            <img class="d-block w-100 rounded img-fluid" src="{{getenv('URL_SERVER').$banner->banner_url}}">
+                                            <img class="d-block w-100 rounded img-fluid" src="{{config('services.media_mirror.url').$banner->banner_url}}">
                                         </div>
                                     @endif
                                 @endforeach
                             @else
                             <div class="carousel-item active">
-                                <img class="d-block w-100 rounded img-fluid" src="{{getenv('URL_SERVER')}}/assets/img/Banner/banner_original.png">
+                                <img class="d-block w-100 rounded img-fluid" src="{{config('services.media_mirror.url')}}/assets/img/Banner/banner_original.png">
                             </div>
                             @endif
                         @endif
