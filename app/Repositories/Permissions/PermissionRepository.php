@@ -15,6 +15,7 @@ class PermissionRepository implements PermissionRepositoryInterface
     public function save(string $name): bool
     {
         Permission::create(['name' => $name]);
+
         return true;
     }
 
@@ -25,7 +26,7 @@ class PermissionRepository implements PermissionRepositoryInterface
 
     public function update(Permission $permission, string $name): bool
     {
-        $permission->update(['name' => $name]) ;
+        $permission->update(['name' => $name]);
 
         return true;
     }
@@ -36,6 +37,4 @@ class PermissionRepository implements PermissionRepositoryInterface
 
         return true;
     }
-
-
 }

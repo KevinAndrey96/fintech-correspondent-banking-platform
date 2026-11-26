@@ -19,14 +19,13 @@ use Illuminate\Support\ServiceProvider;
 class UseCasesServiceProvider extends ServiceProvider
 {
     protected array $classes = [
-            GetStatisticsDataUseCaseInterface::class => GetStatisticsDataUseCase::class,
-            GetRoleIDsPermissionIDsUseCaseInterface::class => GetRoleIDsPermissionIDsUseCase::class,
-            ValidateLimitOfTransactionsByAccountUseCaseInterface::class => ValidateLimitOfTransactionsByAccountUseCase::class,
-            CreateTransactionUseCaseInterface::class => CreateTransactionUseCase::class,
-            GetTransactionDetailUseCaseInterface::class => GetTransactionDetailUseCase::class,
-            GetAllTransactionsByUserUseCaseInterface::class => GetAllTransactionsByUserUseCase::class
-        ];
-
+        GetStatisticsDataUseCaseInterface::class => GetStatisticsDataUseCase::class,
+        GetRoleIDsPermissionIDsUseCaseInterface::class => GetRoleIDsPermissionIDsUseCase::class,
+        ValidateLimitOfTransactionsByAccountUseCaseInterface::class => ValidateLimitOfTransactionsByAccountUseCase::class,
+        CreateTransactionUseCaseInterface::class => CreateTransactionUseCase::class,
+        GetTransactionDetailUseCaseInterface::class => GetTransactionDetailUseCase::class,
+        GetAllTransactionsByUserUseCaseInterface::class => GetAllTransactionsByUserUseCase::class,
+    ];
 
     public function register()
     {

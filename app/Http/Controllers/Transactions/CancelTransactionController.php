@@ -10,7 +10,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 
-
 class CancelTransactionController extends Controller
 {
     public function cancel($id): Redirector|Application|RedirectResponse
@@ -22,6 +21,7 @@ class CancelTransactionController extends Controller
             $user = User::find(Auth::user()->id);
             $user->daily_verified = 0;
             $user->save();
+
             return redirect('/transactions?id=record')->with(
                 'cancelTransactionSuccess',
                 'Se ha cancelado la transacción'

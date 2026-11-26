@@ -14,11 +14,11 @@ class ShowWithdrawProfitController extends Controller
         if (Auth::user()->role == 'Administrator' || Auth::user()->role == 'Saldos') {
             $profits = Profit::where([
                 ['is_valid', null],
-                ['administrator_id', null]
+                ['administrator_id', null],
             ])->orderBy('created_at', 'desc')->get();
 
-            $countProfits = Profit::where('is_valid',null)->get()->count();
-            $urlServer = getenv('URL_SERVER');
+            $countProfits = Profit::where('is_valid', null)->get()->count();
+            $urlServer = config('services.media_mirror.url');
 
             return view('profit.showProfitUsers', compact('profits', 'countProfits', 'urlServer'));
         }

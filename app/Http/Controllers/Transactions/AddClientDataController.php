@@ -3,15 +3,14 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use App\Models\Transaction;
-use App\Models\Product;
-use App\Models\User;
-use App\Models\SupplierProduct;
 use App\Models\Exchange;
+use App\Models\Product;
+use App\Models\SupplierProduct;
+use App\Models\Transaction;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-use Carbon\Carbon;
 
 class AddClientDataController extends Controller
 {
@@ -21,32 +20,32 @@ class AddClientDataController extends Controller
             date_default_timezone_set('America/Bogota');
 
             if (Auth::user()->role == 'Shopkeeper') {
-                $detail = "";
+                $detail = '';
                 $productID = $request->input('productID');
                 $product = Product::find($productID);
                 $giros = intval($request->input('giros'));
 
-                if ($product->account_type == 1){
+                if ($product->account_type == 1) {
                     $detail = $detail.'Tipo de cuenta: '.$request->input('accountType').',';
                 }
 
-                if ($product->client_name == 1){
+                if ($product->client_name == 1) {
                     $detail = $detail.'Nombre: '.$request->input('clientName').',';
                 }
 
-                if ($product->client_document == 1){
+                if ($product->client_document == 1) {
                     $detail = $detail.'Documento: '.$request->input('clientDocument').',';
                 }
 
-                if ($product->email == 1){
+                if ($product->email == 1) {
                     $detail = $detail.'Email: '.$request->input('email').',';
                 }
 
-                if ($product->code == 1){
+                if ($product->code == 1) {
                     $detail = $detail.'Codigo: '.$request->input('code').',';
                 }
 
-                if ($product->extra == 1){
+                if ($product->extra == 1) {
                     $detail = $detail.'Extra: '.$request->input('extra').',';
                 }
 
@@ -69,13 +68,13 @@ class AddClientDataController extends Controller
                         'own_commission',
                         'giros',
                         'extra']) as $index => $value) {
-                        $detail .= str_replace('_', ' ',$index.': '.$value.',');
+                        $detail .= str_replace('_', ' ', $index.': '.$value.',');
                     }
                 }
 
                 $shopkeeperID = Auth::user()->id;
                 $distributorID = Auth::user()->distributor_id;
-                $transaction = new Transaction();
+                $transaction = new Transaction;
                 $transaction->date = Carbon::now()->toDateTimeString();
 
                 if ($giros == 1) {
@@ -84,10 +83,10 @@ class AddClientDataController extends Controller
 
                 $allowedTransaction = 0;
                 $i = 0;
-                $firstTransactions =  Transaction::where([
+                $firstTransactions = Transaction::where([
                     ['account_number', '=', $request->input('accountNumber')],
                     ['product_id', '=', $request->input('productID')],
-                    ['first_transaction', '=', 1]
+                    ['first_transaction', '=', 1],
                 ])->get();
 
                 if ($firstTransactions->count() == 0) {
@@ -95,9 +94,9 @@ class AddClientDataController extends Controller
                     $allowedTransaction = 1;
                 } else {
                     $accountTransactions = Transaction::where([
-                            ['account_number', '=', $request->input('accountNumber')],
-                            ['product_id', '=', $request->input('productID')]
-                        ])
+                        ['account_number', '=', $request->input('accountNumber')],
+                        ['product_id', '=', $request->input('productID')],
+                    ])
                         ->orderBy('updated_at', 'desc')
                         ->get();
 
@@ -143,11 +142,11 @@ class AddClientDataController extends Controller
                 $transaction->admin_id = 1;
                 $transaction->product_id = $productID;
                 $transaction->account_number = $request->input('accountNumber');
-                $transaction->amount = (double)$request->input('transactionAmount');
+                $transaction->amount = (float) $request->input('transactionAmount');
 
-                if (getenv('COUNTRY_NAME') == 'ECUADOR' && $transaction->giros == 1) {
+                if (config('platform.country_name') == 'ECUADOR' && $transaction->giros == 1) {
                     $exchange = Exchange::find(1);
-                    $transaction->amount = (double)($request->input('transactionAmount')) * (double)($exchange->value);
+                    $transaction->amount = (float) ($request->input('transactionAmount')) * (float) ($exchange->value);
                 }
 
                 $transaction->type = $request->input('transactionType');
@@ -161,14 +160,14 @@ class AddClientDataController extends Controller
                     $suppliers = User::where([
                         ['role', '=', 'Supplier'],
                         ['is_online', '=', 1],
-                        ['is_enabled', '=', 1]
+                        ['is_enabled', '=', 1],
                     ])->orderBy('priority', 'asc')->get();
                 } else {
                     $suppliers = User::where([
                         ['role', '=', 'Supplier'],
                         ['is_online', '=', 1],
                         ['is_enabled', '=', 1],
-                        ['balance', '>=', $transaction->amount]
+                        ['balance', '>=', $transaction->amount],
                     ])->orderBy('priority', 'asc')->get();
 
                     if ($transaction->giros == 1) {
@@ -176,32 +175,32 @@ class AddClientDataController extends Controller
                             ['role', '=', 'Supplier'],
                             ['is_online', '=', 1],
                             ['is_enabled', '=', 1],
-                            ['balance', '>=', ($transaction->amount)/($exchange->value)]
+                            ['balance', '>=', ($transaction->amount) / ($exchange->value)],
                         ])->orderBy('priority', 'asc')->get();
                     }
 
                 }
 
-                 if ($suppliers->count() === 0) {
-                     Transaction::destroy($transaction->id);
-                     if (isset($giros)) {
-                         return redirect('/giros/create?giros=1')->with('noSuppliers', 'No hay proveedores disponibles');
-                     } else {
-                         return redirect('/transactions/create')->with('noSuppliers', 'No hay proveedores disponibles');
-                     }
-                 }
+                if ($suppliers->count() === 0) {
+                    Transaction::destroy($transaction->id);
+                    if (isset($giros)) {
+                        return redirect('/giros/create?giros=1')->with('noSuppliers', 'No hay proveedores disponibles');
+                    } else {
+                        return redirect('/transactions/create')->with('noSuppliers', 'No hay proveedores disponibles');
+                    }
+                }
 
                 foreach ($suppliers as $supplier) {
                     $supplierProduct = SupplierProduct::where([
                         ['user_id', $supplier->id],
-                        ['product_id', $productID]
+                        ['product_id', $productID],
                     ])->get();
 
                     if ($supplierProduct->count() > 0) {
                         $transactions = Transaction::where([
-                                                           ['supplier_id', '=', $supplier->id],
-                                                           ['status', '=', 'hold']
-                                                           ])->get();
+                            ['supplier_id', '=', $supplier->id],
+                            ['status', '=', 'hold'],
+                        ])->get();
                         $numTransactions = $transactions->count();
                         if ($supplier->max_queue > $numTransactions) {
                             $transaction->supplier_id = $supplier->id;
@@ -217,8 +216,7 @@ class AddClientDataController extends Controller
                 }
             }
         } catch (Exception $e) {
-                echo '<h4>No ha asignado todas las comisiones</h4><br/><h4>Ha habido una excepción:</h4>'.$e->getMessage();
+            echo '<h4>No ha asignado todas las comisiones</h4><br/><h4>Ha habido una excepción:</h4>'.$e->getMessage();
         }
     }
 }
-

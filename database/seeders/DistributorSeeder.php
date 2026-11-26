@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class DistributorSeeder extends Seeder
 {
@@ -18,7 +17,7 @@ class DistributorSeeder extends Seeder
     {
         /*$user = new User();
         $user->name = "Distribuidor";
-        $user->email = "distributor@gmail.com";
+        $user->email = "distributor@example.com";
         $user->password = Hash::make('distributor');
         $user->role = "Distributor";
         $user->phone = "4564323";

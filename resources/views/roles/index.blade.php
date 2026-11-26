@@ -186,7 +186,7 @@
 
                 $('#my_table').DataTable({
                     ajax: {
-                        "url": "{{getenv('APP_URL')}}/api/role-store",
+                        "url": "{{config('app.url')}}/api/role-store",
                         "type": "POST",
                         "data": data,
                         "debug": true,

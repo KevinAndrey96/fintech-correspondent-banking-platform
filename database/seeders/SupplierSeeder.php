@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class SupplierSeeder extends Seeder
 {
@@ -18,7 +17,7 @@ class SupplierSeeder extends Seeder
     {
         /*$user = new User();
         $user->name = "Supplier";
-        $user->email = "supplier@gmail.com";
+        $user->email = "supplier@example.com";
         $user->password = Hash::make('supplier');
         $user->role = "Supplier";
         $user->phone = "7110042";
@@ -36,7 +35,7 @@ class SupplierSeeder extends Seeder
 
         $user = new User();
         $user->name = "Gloria Arbeláez";
-        $user->email = "gloria@gmail.com";
+        $user->email = "gloria@example.com";
         $user->password = Hash::make('gloria');
         $user->role = "Supplier";
         $user->phone = "7615242";
@@ -54,7 +53,7 @@ class SupplierSeeder extends Seeder
 
         $user = new User();
         $user->name = "Noe Quiñones";
-        $user->email = "noe@gmail.com";
+        $user->email = "noe@example.com";
         $user->password = Hash::make('noe');
         $user->role = "Supplier";
         $user->phone = "207-829-9969";
@@ -72,7 +71,7 @@ class SupplierSeeder extends Seeder
 
         $user = new User();
         $user->name = "Maribel Narváez Arredondo";
-        $user->email = "maribel@gmail.com";
+        $user->email = "maribel@example.com";
         $user->password = Hash::make('maribel');
         $user->role = "Supplier";
         $user->phone = "734618180";
@@ -90,7 +89,7 @@ class SupplierSeeder extends Seeder
 
         $user = new User();
         $user->name = "Luis Torres Sauceda";
-        $user->email = "luisto@gmail.com";
+        $user->email = "luisto@example.com";
         $user->password = Hash::make('luisto');
         $user->role = "Supplier";
         $user->phone = "719594609";
@@ -109,7 +108,7 @@ class SupplierSeeder extends Seeder
 
         $user = new User();
         $user->name = "Leo Carrasco Montemayor";
-        $user->email = "leo@gmail.com";
+        $user->email = "leo@example.com";
         $user->password = Hash::make('leo');
         $user->role = "Supplier";
         $user->phone = "695546466";

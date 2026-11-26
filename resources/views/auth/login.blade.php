@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
     @if (isset($brand))
-        <link rel="icon" type="image/png" href="{{getenv('URL_SERVER').$brand->square_logo_url}}">
+        <link rel="icon" type="image/png" href="{{config('services.media_mirror.url').$brand->square_logo_url}}">
     @else
         <link rel="icon" type="image/png" href="/assets/img/favicon1.png">
     @endif
@@ -37,7 +37,7 @@
                         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                             @if (isset($brand))
                                 <div style="background-image: linear-gradient(195deg, {{$brand->primary_color}} 0%, #191919 100%);" class="bg-gradient-secondary shadow-primary border-radius-lg py-2 pe-1">
-                                    <h6 class="text-white font-weight-bolder text-center mt-1 mb-1"><img src="{{getenv('URL_SERVER').$brand->rectangular_logo_url}}" style="max-width:30%" height="auto"></h6>
+                                    <h6 class="text-white font-weight-bolder text-center mt-1 mb-1"><img src="{{config('services.media_mirror.url').$brand->rectangular_logo_url}}" style="max-width:30%" height="auto"></h6>
                                 </div>
                             @else
                                 <div class="bg-gradient-secondary shadow-primary border-radius-lg py-2 pe-1">

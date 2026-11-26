@@ -4,8 +4,6 @@ namespace App\UseCases\Roles;
 
 use App\UseCases\Contracts\Roles\SavePermissionAssignmentsRolesUseCaseInterface;
 
-
-
 class SavePermissionAssignmentsRolesUseCase implements SavePermissionAssignmentsRolesUseCaseInterface
 {
     private SavePermissionAssignmentsRolesUseCaseInterface $savePermissionAssignmentsRolesUseCase;
@@ -14,7 +12,4 @@ class SavePermissionAssignmentsRolesUseCase implements SavePermissionAssignments
     {
         $this->savePermissionAssignmentsRolesUseCase = $savePermissionAssignmentsRolesUseCase;
     }
-
-
-
 }

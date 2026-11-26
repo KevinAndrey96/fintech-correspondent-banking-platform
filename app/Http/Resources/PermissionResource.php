@@ -27,7 +27,7 @@ class PermissionResource extends JsonResource
             ],
             'relationships' => [
                 'roles' => [
-                    'data' => $this->roles->pluck('id')->toArray()
+                    'data' => $this->roles->pluck('id')->toArray(),
                 ],
             ],
         ];

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Controller;
+use App\Models\ShopkeeperAdviser;
 use App\Models\User;
 use App\Models\UserBank;
-use App\Models\ShopkeeperAdviser;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +47,7 @@ class UpdateUsersController extends Controller
             }
 
             foreach ($request->card_ids as $cardID) {
-                $userBank = new UserBank();
+                $userBank = new UserBank;
                 $userBank->user_id = $user->id;
                 $userBank->card_id = $cardID;
                 $userBank->save();
@@ -77,8 +75,8 @@ class UpdateUsersController extends Controller
         }
 
         if (isset($request->password)) {
-            if (strlen($request->password) < 7 || !preg_match('`[0-9]`',$request->password)
-                || !preg_match('`[a-z]`', $request->password) ) {
+            if (strlen($request->password) < 7 || ! preg_match('`[0-9]`', $request->password)
+                || ! preg_match('`[a-z]`', $request->password)) {
 
                 return back()->with('unfulfilledRequirements', 'La contraseña debe tener mínimo 7 caracteres, al menos una letra y al menos un número.');
             }
@@ -97,7 +95,7 @@ class UpdateUsersController extends Controller
                     $shopkeeperAdviser->adviser_id = $request->input('adviserID');
                     $shopkeeperAdviser->save();
                 } else {
-                    $shopkeeperAdviser = new ShopkeeperAdviser();
+                    $shopkeeperAdviser = new ShopkeeperAdviser;
                     $shopkeeperAdviser->shopkeeper_id = $user->id;
                     $shopkeeperAdviser->adviser_id = $request->input('adviserID');
                     $shopkeeperAdviser->save();
@@ -131,7 +129,6 @@ class UpdateUsersController extends Controller
             }
         }
 
-
         if (! is_null($request->input('multiproductosID'))) {
             $user->multiproductosID = $request->input('multiproductosID');
             $user->save();
@@ -141,7 +138,6 @@ class UpdateUsersController extends Controller
             $user->platform_mul = $request->input('platform_mul');
             $user->save();
         }
-
 
         if ($request->hasFile('cedulaPDF')) {
             $path = $_FILES['cedulaPDF']['name'];
@@ -156,9 +152,9 @@ class UpdateUsersController extends Controller
             }
 
             Storage::disk('public')->put($pathName, file_get_contents($request->file('cedulaPDF')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             if ($extension == 'pdf') {
                 $client->request(RequestAlias::METHOD_POST, $url, [
@@ -169,18 +165,18 @@ class UpdateUsersController extends Controller
                                 str_replace(
                                     '\\',
                                     '/',
-                                    Storage::path('public\cedula_pdf\\' . $user->id . '.pdf')
+                                    Storage::path('public\cedula_pdf\\'.$user->id.'.pdf')
                                 ),
                                 'r'
-                            )
+                            ),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'cedula_pdf'
-                        ]
-                    ]
+                            'contents' => 'cedula_pdf',
+                        ],
+                    ],
                 ]);
-                $user->cedulaPDF = '/storage/cedula_pdf/' . $user->id . '.pdf';
+                $user->cedulaPDF = '/storage/cedula_pdf/'.$user->id.'.pdf';
                 unlink(str_replace('\\', '/', storage_path('app/public/cedula_pdf/'.$user->id.'.pdf')));
             }
 
@@ -193,18 +189,18 @@ class UpdateUsersController extends Controller
                                 str_replace(
                                     '\\',
                                     '/',
-                                    Storage::path('public\cedula_pdf\\' . $user->id . '.png')
+                                    Storage::path('public\cedula_pdf\\'.$user->id.'.png')
                                 ),
                                 'r'
-                            )
+                            ),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'cedula_pdf'
-                        ]
-                    ]
+                            'contents' => 'cedula_pdf',
+                        ],
+                    ],
                 ]);
-                $user->cedulaPDF = '/storage/cedula_pdf/' . $user->id . '.png';
+                $user->cedulaPDF = '/storage/cedula_pdf/'.$user->id.'.png';
                 unlink(str_replace('\\', '/', storage_path('app/public/cedula_pdf/'.$user->id.'.png')));
             }
             $user->save();
@@ -223,9 +219,9 @@ class UpdateUsersController extends Controller
             }
 
             Storage::disk('public')->put($pathName, file_get_contents($request->file('rutPDF')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             if ($extension == 'pdf') {
                 $client->request(RequestAlias::METHOD_POST, $url, [
@@ -236,18 +232,18 @@ class UpdateUsersController extends Controller
                                 str_replace(
                                     '\\',
                                     '/',
-                                    Storage::path('public\rut_pdf\\' . $user->id . '.pdf')
+                                    Storage::path('public\rut_pdf\\'.$user->id.'.pdf')
                                 ),
                                 'r'
-                            )
+                            ),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'rut_pdf'
-                        ]
-                    ]
+                            'contents' => 'rut_pdf',
+                        ],
+                    ],
                 ]);
-                $user->rutPDF = '/storage/rut_pdf/' . $user->id . '.pdf';
+                $user->rutPDF = '/storage/rut_pdf/'.$user->id.'.pdf';
                 unlink(str_replace('\\', '/', storage_path('app/public/rut_pdf/'.$user->id.'.pdf')));
             }
 
@@ -260,18 +256,18 @@ class UpdateUsersController extends Controller
                                 str_replace(
                                     '\\',
                                     '/',
-                                    Storage::path('public\rut_pdf\\' . $user->id . '.png')
+                                    Storage::path('public\rut_pdf\\'.$user->id.'.png')
                                 ),
                                 'r'
-                            )
+                            ),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'rut_pdf'
-                        ]
-                    ]
+                            'contents' => 'rut_pdf',
+                        ],
+                    ],
                 ]);
-                $user->rutPDF = '/storage/rut_pdf/' . $user->id . '.png';
+                $user->rutPDF = '/storage/rut_pdf/'.$user->id.'.png';
                 unlink(str_replace('\\', '/', storage_path('app/public/rut_pdf/'.$user->id.'.png')));
             }
 
@@ -281,9 +277,9 @@ class UpdateUsersController extends Controller
         if ($request->hasFile('camara_comercio')) {
             $pathName = sprintf('camara_comercio_pdf/%s.pdf', $user->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('camara_comercio')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url =  $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
@@ -293,18 +289,18 @@ class UpdateUsersController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\camara_comercio_pdf\\' . $user->id . '.pdf')
+                                Storage::path('public\camara_comercio_pdf\\'.$user->id.'.pdf')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'camara_comercio_pdf'
-                    ]
-                ]
+                        'contents' => 'camara_comercio_pdf',
+                    ],
+                ],
             ]);
-            $user->camara_comercio = '/storage/camara_comercio_pdf/' . $user->id . '.pdf';
+            $user->camara_comercio = '/storage/camara_comercio_pdf/'.$user->id.'.pdf';
             $user->save();
             unlink(str_replace('\\', '/', storage_path('app/public/camara_comercio_pdf/'.$user->id.'.pdf')));
         }
@@ -312,9 +308,9 @@ class UpdateUsersController extends Controller
         if ($request->hasFile('local_photo')) {
             $pathName = sprintf('local_photo_pdf/%s.png', $user->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('local_photo')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
@@ -324,18 +320,18 @@ class UpdateUsersController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\local_photo_pdf\\' . $user->id . '.png')
+                                Storage::path('public\local_photo_pdf\\'.$user->id.'.png')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'local_photo_pdf'
-                    ]
-                ]
+                        'contents' => 'local_photo_pdf',
+                    ],
+                ],
             ]);
-            $user->local_photo = '/storage/local_photo_pdf/' . $user->id . '.png';
+            $user->local_photo = '/storage/local_photo_pdf/'.$user->id.'.png';
             $user->save();
             unlink(str_replace('\\', '/', storage_path('app/public/local_photo_pdf/'.$user->id.'.png')));
         }
@@ -343,9 +339,9 @@ class UpdateUsersController extends Controller
         if ($request->hasFile('public_receipt')) {
             $pathName = sprintf('public_receipts/%s.png', $user->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('public_receipt')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
@@ -355,19 +351,19 @@ class UpdateUsersController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\public_receipts\\' . $user->id . '.png')
+                                Storage::path('public\public_receipts\\'.$user->id.'.png')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'public_receipts'
-                    ]
-                ]
+                        'contents' => 'public_receipts',
+                    ],
+                ],
             ]);
 
-            $user->public_receipt = '/storage/public_receipts/' . $user->id . '.png';
+            $user->public_receipt = '/storage/public_receipts/'.$user->id.'.png';
             $user->save();
             unlink(str_replace('\\', '/', storage_path('app/public/public_receipts/'.$user->id.'.png')));
         }

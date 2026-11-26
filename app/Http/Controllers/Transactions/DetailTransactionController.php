@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use App\Models\Summary;
-use Illuminate\Http\Request;
-use App\Models\Transaction;
 use App\Models\Answer;
+use App\Models\Summary;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DetailTransactionController extends Controller
@@ -14,11 +14,10 @@ class DetailTransactionController extends Controller
     public function detail($id, Request $request)
     {
         $detailSupplier = $request->input('detail');
-        $callSign = getenv('COUNTRY_CODE');
-        $urlServer = getenv('URL_SERVER');
+        $callSign = config('platform.country_code');
+        $urlServer = config('services.media_mirror.url');
         $transaction = Transaction::find($id);
         $summariesCount = Summary::where('movement_id', $transaction)->count();
-
 
         if ($transaction->status == 'accepted' && Auth::user()->role == 'Supplier' && $transaction->supplier_id != Auth::user()->id) {
 
@@ -32,7 +31,7 @@ class DetailTransactionController extends Controller
             $answers = Answer::where('is_deleted', 0)->get();
             $transaction->save();
 
-            return view('transactions.detail', compact('transaction', 'extras', 'detailSupplier','callSign', 'urlServer', 'answers', 'summariesCount'));
+            return view('transactions.detail', compact('transaction', 'extras', 'detailSupplier', 'callSign', 'urlServer', 'answers', 'summariesCount'));
         }
         if (Auth::user()->role == 'Supplier' && ! is_null($detailSupplier)) {
 

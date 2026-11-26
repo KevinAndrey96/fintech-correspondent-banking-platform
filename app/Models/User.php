@@ -4,15 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\SupplierProduct;
-use App\Models\Product;
-use App\Models\Brand;
-use Lab404\Impersonate\Models\Impersonate;
 
 /**
  * @property mixed|string $name
@@ -34,6 +31,7 @@ use Lab404\Impersonate\Models\Impersonate;
  * @property mixed $distributor_id
  * @property mixed $brand_id
  * @property mixed $giros
+ *
  * @method static find(int $intval)
  * @method static where(string $string, $id)
  */
@@ -41,19 +39,18 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasRoles;
-    use SoftDeletes;
     use Impersonate;
+    use SoftDeletes;
 
     protected $table = 'users';
 
     public const STATUS_ENABLED = 1;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-
-
     protected $fillable = [
         'name',
         'email',
@@ -91,7 +88,7 @@ class User extends Authenticatable
         'brand_id',
         'balance_min_amount',
         'developer_mode',
-        'webhook_url'
+        'webhook_url',
     ];
 
     /**
@@ -99,7 +96,6 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-
     protected $hidden = [
         'password',
         'remember_token',
@@ -116,8 +112,8 @@ class User extends Authenticatable
 
     public function products()
     {
-    //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-    return $this->belongsToMany(
+        // return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
+        return $this->belongsToMany(
             Product::class,
             'user_product',
             'shopkeeper_id',
@@ -156,13 +152,14 @@ class User extends Authenticatable
 
     /**
      * Interact with the user's first name.
+     *
      * @see google2faSecret
      */
     protected function google2faSecret(): Attribute
     {
         return new Attribute(
-            get: fn ($value) =>  decrypt($value),
-            set: fn ($value) =>  encrypt($value),
+            get: fn ($value) => decrypt($value),
+            set: fn ($value) => encrypt($value),
         );
     }
 }

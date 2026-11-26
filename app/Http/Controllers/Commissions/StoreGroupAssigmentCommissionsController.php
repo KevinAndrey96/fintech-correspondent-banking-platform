@@ -20,14 +20,14 @@ class StoreGroupAssigmentCommissionsController extends Controller
     {
         set_time_limit(0);
 
-        //Validate fields
+        // Validate fields
         $fields = [
             'commissionsGroupID' => 'required|string',
-            'userID' => 'required|string'
+            'userID' => 'required|string',
         ];
 
         $message = [
-            'required' => 'El :attribute es requerido'
+            'required' => 'El :attribute es requerido',
         ];
 
         $this->validate($request, $fields, $message);
@@ -51,13 +51,13 @@ class StoreGroupAssigmentCommissionsController extends Controller
         $shopkeeper->save();
 
         foreach ($commissionsGroupGeneralCommissions as $item) {
-            $shopkeeperCommission = new Commission();
+            $shopkeeperCommission = new Commission;
             $shopkeeperCommission->amount = $item->generalCommission->amount_shop;
             $shopkeeperCommission->product_id = $item->generalCommission->product_id;
             $shopkeeperCommission->user_id = $shopkeeper->id;
             $shopkeeperCommission->save();
 
-            $shopkeeperProduct = new SupplierProduct();
+            $shopkeeperProduct = new SupplierProduct;
             $shopkeeperProduct->user_id = $shopkeeper->id;
             $shopkeeperProduct->product_id = $item->generalCommission->product_id;
             $shopkeeperProduct->save();

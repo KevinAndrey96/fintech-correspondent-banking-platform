@@ -25,7 +25,7 @@
                                         <tr class="align-middle text-center text-sm">
                                             <td>
                                                 <a class="image-link" href="{{$urlServer.$banner->banner_url}}">
-                                                    <img width="200px" class="rounded img-fluid" src="{{ 'https://corresponsales.asparecargas.net'.$banner->banner_url }}">
+                                                    <img width="200px" class="rounded img-fluid" src="{{ config('services.media_mirror.url').$banner->banner_url }}">
                                                 </a>
                                             </td>
                                             <td>

@@ -11,6 +11,6 @@ class Exchange extends Model
 
     protected $fillable = [
         'badge',
-        'value'
+        'value',
     ];
 }

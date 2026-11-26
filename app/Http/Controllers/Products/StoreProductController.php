@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Products;
 
-use App\Models\Product;
-use App\Models\Commission;
-use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Commission;
+use App\Models\Product;
+use App\Models\User;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
@@ -23,48 +22,48 @@ class StoreProductController extends Controller
     public function store(Request $request)
     {
         $fields = [
-            'productName'=>'required|string',
-            'productType'=>'required|string',
-            'productDescription'=>'required|string',
-            'productCommission'=>'required',
-            'image'=>'required',
-            'min_amount'=>'required',
-            'max_amount'=>'required',
-            'priority'=>'required',
-            'num_jineteo'=>'required',
-            'hours'=>'required',
+            'productName' => 'required|string',
+            'productType' => 'required|string',
+            'productDescription' => 'required|string',
+            'productCommission' => 'required',
+            'image' => 'required',
+            'min_amount' => 'required',
+            'max_amount' => 'required',
+            'priority' => 'required',
+            'num_jineteo' => 'required',
+            'hours' => 'required',
             'reassignment_minutes' => 'required',
             'fixed_commission' => 'required',
             'defaultFieldsRadio' => 'required',
-            'category' => 'string'
-         ];
+            'category' => 'string',
+        ];
 
         $defaultFields = [
-            'clientDocument'=>'required|boolean',
-            'accountType'=>'required|boolean',
-            'email'=>'required|boolean',
-            'extra'=>'required|boolean',
-            'code'=>'required|boolean',
-            'clientName'=>'required|boolean',
+            'clientDocument' => 'required|boolean',
+            'accountType' => 'required|boolean',
+            'email' => 'required|boolean',
+            'extra' => 'required|boolean',
+            'code' => 'required|boolean',
+            'clientName' => 'required|boolean',
         ];
 
         if (! $request->defaultFieldsRadio) {
             $defaultFields = [
-                'fieldNames' => 'required'
+                'fieldNames' => 'required',
             ];
         }
 
         $fields = array_merge($fields, $defaultFields);
 
         $message = [
-                'required' => ':attribute es requerido',
-                'fieldNames.required' => 'Los nombres de los campos son requeridos',
-                'defaultFieldsRadio.required' => 'Por favor seleccione el tipo de campo para la transacción'
+            'required' => ':attribute es requerido',
+            'fieldNames.required' => 'Los nombres de los campos son requeridos',
+            'defaultFieldsRadio.required' => 'Por favor seleccione el tipo de campo para la transacción',
         ];
 
         $this->validate($request, $fields, $message);
 
-        $product = new Product();
+        $product = new Product;
         $product->product_name = $request->input('productName');
         $product->product_type = $request->input('productType');
         $product->product_description = $request->input('productDescription');
@@ -118,7 +117,7 @@ class StoreProductController extends Controller
 
         $product->save();
 
-        if (! is_null($product->com_shp) && ! is_null($product->com_dis ) && ! is_null($product->com_sup)) {
+        if (! is_null($product->com_shp) && ! is_null($product->com_dis) && ! is_null($product->com_sup)) {
 
             $users = User::where('role', 'Distributor')
                 ->orWhere('role', 'Shopkeeper')
@@ -128,7 +127,7 @@ class StoreProductController extends Controller
             foreach ($users as $user) {
 
                 if ($user->role == 'Distributor') {
-                    $commission = new Commission();
+                    $commission = new Commission;
                     $commission->user_id = $user->id;
                     $commission->product_id = $product->id;
                     $commission->amount = $product->com_dis;
@@ -136,7 +135,7 @@ class StoreProductController extends Controller
                 }
 
                 if ($user->role == 'Shopkeeper') {
-                    $commission = new Commission();
+                    $commission = new Commission;
                     $commission->user_id = $user->id;
                     $commission->product_id = $product->id;
                     $commission->amount = $product->com_shp;
@@ -144,7 +143,7 @@ class StoreProductController extends Controller
                 }
 
                 if ($user->role == 'Supplier') {
-                    $commission = new Commission();
+                    $commission = new Commission;
                     $commission->user_id = $user->id;
                     $commission->product_id = $product->id;
                     $commission->amount = $product->com_sup;
@@ -154,26 +153,26 @@ class StoreProductController extends Controller
         }
 
         if ($request->hasFile('image')) {
-            $pathName = Sprintf('products/%s.png', $product->id);
+            $pathName = sprintf('products/%s.png', $product->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('image')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
                     [
                         'name' => 'image',
                         'contents' => fopen(
-                            str_replace('\\', '/', Storage::path('public\products\\' .$product->id . '.png')),'r'),
+                            str_replace('\\', '/', Storage::path('public\products\\'.$product->id.'.png')), 'r'),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'products'
-                    ]
-                ]
+                        'contents' => 'products',
+                    ],
+                ],
             ]);
-            $product->product_logo = '/storage/products/' . $product->id . '.png';
+            $product->product_logo = '/storage/products/'.$product->id.'.png';
             $product->save();
             unlink(str_replace('\\', '/', storage_path('app/public/products/'.$product->id.'.png')));
         }

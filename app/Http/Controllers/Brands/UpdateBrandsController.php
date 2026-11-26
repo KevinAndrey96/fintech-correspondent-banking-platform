@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Brands;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Brand;
+use Illuminate\Http\Request;
 
 class UpdateBrandsController extends Controller
 {
@@ -14,13 +14,12 @@ class UpdateBrandsController extends Controller
         $brand->primary_color = $request->input('primary_color');
         $brand->domain = $request->input('domain');
 
-
         if ($request->hasFile('square_logo')) {
             $file = $request->file('square_logo');
             $path = 'square_logo';
             $fileName = strval($brand->id);
             uploadFile($file, $fileName, $path);
-            $brand->square_logo_url = '/storage/' . $path . '/' . $fileName . '.png';
+            $brand->square_logo_url = '/storage/'.$path.'/'.$fileName.'.png';
             $brand->save();
         }
 
@@ -29,7 +28,7 @@ class UpdateBrandsController extends Controller
             $path = 'rectangular_logo';
             $fileName = strval($brand->id);
             uploadFile($file, $fileName, $path);
-            $brand->rectangular_logo_url = '/storage/' . $path . '/' . $fileName . '.png';
+            $brand->rectangular_logo_url = '/storage/'.$path.'/'.$fileName.'.png';
             $brand->save();
         }
 

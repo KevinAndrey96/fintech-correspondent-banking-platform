@@ -3,14 +3,9 @@
 namespace App\UseCases\Transactions;
 
 use App\DTOs\Transactions\CreateTransactionDTO;
-use App\Models\SupplierProduct;
-use App\Models\Transaction;
-use App\Models\User;
 use App\Repositories\Contracts\Products\ProductRepositoryInterface;
 use App\Repositories\Contracts\Transactions\TransactionRepositoryInterface;
 use App\Repositories\Contracts\Users\UserRepositoryInterface;
-use App\Repositories\Products\ProductRepository;
-use App\Repositories\Transactions\TransactionRepository;
 use App\UseCases\Contracts\Transactions\CreateTransactionUseCaseInterface;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -19,20 +14,19 @@ use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
 class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 {
-
-
     protected TransactionRepositoryInterface $transactionRepository;
+
     protected ProductRepositoryInterface $productRepository;
+
     protected UserRepositoryInterface $userRepository;
 
     public function __construct(TransactionRepositoryInterface $transactionRepository,
-                                ProductRepositoryInterface $productRepository,
-                                UserRepositoryInterface $userRepository,
-    )
-    {
-      $this->transactionRepository = $transactionRepository;
-      $this->productRepository = $productRepository;
-      $this->userRepository = $userRepository;
+        ProductRepositoryInterface $productRepository,
+        UserRepositoryInterface $userRepository,
+    ) {
+        $this->transactionRepository = $transactionRepository;
+        $this->productRepository = $productRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function handle(CreateTransactionDTO $DTO)
@@ -41,20 +35,20 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
         $shopkeeper = $this->userRepository->getByID($transaction->shopkeeper_id);
 
         try {
-            if (isset($shopkeeper) && $shopkeeper->developer_mode && !empty($shopkeeper->webhook_url)) {
+            if (isset($shopkeeper) && $shopkeeper->developer_mode && ! empty($shopkeeper->webhook_url)) {
 
-                $client = new Client();
+                $client = new Client;
 
                 $client->request(RequestAlias::METHOD_POST, $shopkeeper->webhook_url, [
                     'json' => [
                         'webhook_type' => 'TRANSACTION',
                         'webhook_code' => 'STATUS_UPDATED',
                         'transaction_id' => $transaction->id,
-                        'environment' => getenv('PROJECT_ENVIRONMENT')
-                    ]
+                        'environment' => config('platform.environment'),
+                    ],
                 ]);
             }
-        } catch(GuzzleException $e) {
+        } catch (GuzzleException $e) {
             error_log($e);
         }
 
@@ -62,7 +56,7 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 
         $allowedTransaction = 0;
         $transactionsCount = 0;
-        $firstTransactions =  $this->transactionRepository->getFirstTransactionsByAccountNumber($transaction->account_number, $transaction->product_id);
+        $firstTransactions = $this->transactionRepository->getFirstTransactionsByAccountNumber($transaction->account_number, $transaction->product_id);
 
         if ($firstTransactions->count() == 0) {
             $this->transactionRepository->update($transaction, null, 1, null);
@@ -101,9 +95,10 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 
         if ($allowedTransaction == 0) {
             $this->transactionRepository->update($transaction, 'cancelled', null, null);
+
             return [
                 'transaction_id' => $transaction->id,
-                'message' => 'Esta cuenta superó el límite de transacciones por periodo, podra realizar transacciones con la misma a partir de las '.$allowedHour
+                'message' => 'Esta cuenta superó el límite de transacciones por periodo, podra realizar transacciones con la misma a partir de las '.$allowedHour,
             ];
         }
 
@@ -115,9 +110,10 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 
         if (! $suppliers->count()) {
             $this->transactionRepository->update($transaction, 'cancelled', null, null);
+
             return [
                 'transaction_id' => $transaction->id,
-                'message' => 'No hay proveedores disponibles'
+                'message' => 'No hay proveedores disponibles',
             ];
         }
 
@@ -133,7 +129,7 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 
                     return [
                         'transaction_id' => $transaction->id,
-                        'message' => 'Transacción asignada a proveedor'
+                        'message' => 'Transacción asignada a proveedor',
                     ];
                 }
             }
@@ -143,7 +139,7 @@ class CreateTransactionUseCase implements CreateTransactionUseCaseInterface
 
         return [
             'transaction_id' => $transaction->id,
-            'message' => 'No hay proveedores disponibles'
+            'message' => 'No hay proveedores disponibles',
         ];
 
     }

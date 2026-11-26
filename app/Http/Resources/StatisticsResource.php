@@ -16,16 +16,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class StatisticsResource extends JsonResource
 {
     public function __construct($failedTransactions, $successTransactions, $cancelledTransactions, $holdTransactions,
-                                $acceptedTransactions, $userRole, $userID)
+        $acceptedTransactions, $userRole, $userID)
     {
         $this->failedTransactions = $failedTransactions;
         $this->successTransactions = $successTransactions;
         $this->cancelledTransactions = $cancelledTransactions;
         $this->holdTransactions = $holdTransactions;
-        $this->acceptedTransactions =  $acceptedTransactions;
-        $this->userRole =  $userRole;
-        $this->userID =  $userID;
-     }
+        $this->acceptedTransactions = $acceptedTransactions;
+        $this->userRole = $userRole;
+        $this->userID = $userID;
+    }
 
     public function toArray($request)
     {

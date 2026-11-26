@@ -11,14 +11,13 @@ class RequestDailyPasswordMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
     {
 
-        if (Auth::user()->daily_verified == 0 && Auth::user()->enabled_daily == 1   ) {
+        if (Auth::user()->daily_verified == 0 && Auth::user()->enabled_daily == 1) {
             return redirect()->route('users.require.daily.password');
         }
 

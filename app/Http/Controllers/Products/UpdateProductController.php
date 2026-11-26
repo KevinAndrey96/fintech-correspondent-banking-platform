@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Products;
 
+use App\Http\Controllers\Controller;
 use App\Models\Commission;
 use App\Models\CommissionsGroupGeneralCommission;
 use App\Models\GeneralCommission;
 use App\Models\Product;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
 class UpdateProductController extends Controller
@@ -19,41 +18,41 @@ class UpdateProductController extends Controller
     {
         set_time_limit(0);
         $fields = [
-            'productName'=>'required|string',
-            'productType'=>'required|string',
-            'productDescription'=>'required|string',
-            'productCommission'=>'required',
-            'min_amount'=>'required',
-            'max_amount'=>'required',
-            'priority'=>'required',
-            'num_jineteo'=>'required',
-            'hours'=>'required',
+            'productName' => 'required|string',
+            'productType' => 'required|string',
+            'productDescription' => 'required|string',
+            'productCommission' => 'required',
+            'min_amount' => 'required',
+            'max_amount' => 'required',
+            'priority' => 'required',
+            'num_jineteo' => 'required',
+            'hours' => 'required',
             'reassignment_minutes' => 'required',
             'fixed_commission' => 'required',
-            'defaultFieldsRadio' => 'required'
+            'defaultFieldsRadio' => 'required',
         ];
 
         $defaultFields = [
-            'clientDocument'=>'required|boolean',
-            'accountType'=>'required|boolean',
-            'email'=>'required|boolean',
-            'extra'=>'required|boolean',
-            'code'=>'required|boolean',
-            'clientName'=>'required|boolean',
+            'clientDocument' => 'required|boolean',
+            'accountType' => 'required|boolean',
+            'email' => 'required|boolean',
+            'extra' => 'required|boolean',
+            'code' => 'required|boolean',
+            'clientName' => 'required|boolean',
         ];
 
         if (! $request->defaultFieldsRadio) {
             $defaultFields = [
-                'fieldNames' => 'required'
+                'fieldNames' => 'required',
             ];
         }
 
         $fields = array_merge($fields, $defaultFields);
 
-        $message= [
+        $message = [
             'required' => ':attribute es requerido',
             'fieldNames.required' => 'Los nombres de los campos son requeridos',
-            'defaultFieldsRadio.required' => 'Por favor seleccione el tipo de campo para la transacción'
+            'defaultFieldsRadio.required' => 'Por favor seleccione el tipo de campo para la transacción',
         ];
 
         $this->validate($request, $fields, $message);
@@ -141,27 +140,27 @@ class UpdateProductController extends Controller
         $product->save();
 
         if ($request->hasFile('image')) {
-            $pathName = Sprintf('products/%s.png', $product->id);
+            $pathName = sprintf('products/%s.png', $product->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('image')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
                     [
                         'name' => 'image',
                         'contents' => fopen(
-                            str_replace('\\', '/', Storage::disk('public')->path('products/' .$product->id . '.png')),'r'),
+                            str_replace('\\', '/', Storage::disk('public')->path('products/'.$product->id.'.png')), 'r'),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'products'
-                    ]
-                ]
+                        'contents' => 'products',
+                    ],
+                ],
             ]);
 
-            $product->product_logo = '/storage/products/' . $product->id . '.png';
+            $product->product_logo = '/storage/products/'.$product->id.'.png';
             $product->save();
             unlink(str_replace('\\', '/', storage_path('app/public/products/'.$product->id.'.png')));
         }

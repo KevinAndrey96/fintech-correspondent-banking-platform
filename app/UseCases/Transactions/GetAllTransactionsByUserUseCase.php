@@ -3,7 +3,6 @@
 namespace App\UseCases\Transactions;
 
 use App\Http\Resources\AllTransactionsByUserResource;
-use App\Models\Transaction;
 use App\Repositories\Contracts\Transactions\TransactionRepositoryInterface;
 use App\Repositories\Contracts\Users\UserRepositoryInterface;
 use App\UseCases\Contracts\Transactions\GetAllTransactionsByUserUseCaseInterface;
@@ -13,10 +12,11 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class GetAllTransactionsByUserUseCase implements GetAllTransactionsByUserUseCaseInterface
 {
     protected TransactionRepositoryInterface $transactionRepository;
+
     protected UserRepositoryInterface $UserRepository;
 
     public function __construct(TransactionRepositoryInterface $transactionRepository,
-                                UserRepositoryInterface $userRepository)
+        UserRepositoryInterface $userRepository)
     {
         $this->transactionRepository = $transactionRepository;
         $this->userRepository = $userRepository;
@@ -45,8 +45,8 @@ class GetAllTransactionsByUserUseCase implements GetAllTransactionsByUserUseCase
                 $dateFrom, $dateTo, $user->id);
         }
 
-        $transactions = $transactions->map(function($transaction){
-            return (object)[
+        $transactions = $transactions->map(function ($transaction) {
+            return (object) [
                 'id' => $transaction->id,
                 'account_number' => $transaction->account_number,
                 'amount' => $transaction->amount,
@@ -59,7 +59,7 @@ class GetAllTransactionsByUserUseCase implements GetAllTransactionsByUserUseCase
                 'product' => $transaction->product->product_name,
                 'observation' => $transaction->observation,
                 'created_at' => $transaction->created_at,
-                'updated_at' => $transaction->updated_at
+                'updated_at' => $transaction->updated_at,
             ];
         });
 

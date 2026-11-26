@@ -4,27 +4,31 @@ namespace App\Http\Controllers\API\Products;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductsResource;
-use App\Http\Resources\ResidentResource;
 use App\Repositories\Contracts\Products\ProductRepositoryInterface;
-use Illuminate\Http\Request;
 
 class GetProductsController extends Controller
 {
     /**
      * Get enabled products
+     *
      * @OA\Get(
      *     path="/api/v1/products",
      *     tags={"Products"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Get enabled products",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                 property="data",
      *                 type="array",
+     *
      *                 @OA\Items(
      *                     type="object",
+     *
      *                     @OA\Property(property="type", type="string", example="product"),
      *                     @OA\Property(property="attributes", type="object",
      *                         @OA\Property(property="id", type="integer", example=1),
@@ -56,7 +60,6 @@ class GetProductsController extends Controller
      *     }
      * )
      */
-
     protected ProductRepositoryInterface $productRepository;
 
     public function __construct(ProductRepositoryInterface $productRepository)
@@ -69,7 +72,7 @@ class GetProductsController extends Controller
         $products = ProductsResource::collection($this->productRepository->getAll());
 
         return response()->json([
-            'data' => $products
-            ], 200);
+            'data' => $products,
+        ], 200);
     }
 }

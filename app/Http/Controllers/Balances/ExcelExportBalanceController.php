@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Balances;
 
-use App\Http\Controllers\Controller;
 use App\Exports\BalancesExport;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ExcelExportBalanceController extends Controller
 {

@@ -68,7 +68,7 @@
                                         },
                                         "access_token": {
                                             "type": "string",
-                                            "example": "***REMOVED***"
+                                            "example": "<access-token>"
                                         }
                                     },
                                     "type": "object"

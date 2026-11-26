@@ -12,7 +12,7 @@ class UserRepository implements UserRepositoryInterface
         return User::where([
             ['role', 'Supplier'],
             ['is_online', 1],
-            ['is_enabled', 1]
+            ['is_enabled', 1],
         ])
             ->orderBy('priority', 'asc')
             ->get();
@@ -24,7 +24,7 @@ class UserRepository implements UserRepositoryInterface
             ['role', '=', 'Supplier'],
             ['is_online', '=', 1],
             ['is_enabled', '=', 1],
-            ['balance', '>=', $amount]
+            ['balance', '>=', $amount],
         ])
             ->orderBy('priority', 'asc')
             ->get();

@@ -11,7 +11,6 @@ class IsenabledMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -19,6 +18,7 @@ class IsenabledMiddleware
     {
         if (Auth::user()->is_enabled == 0) {
             Auth::logout();
+
             return redirect('/');
         }
 

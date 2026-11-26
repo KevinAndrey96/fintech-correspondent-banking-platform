@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Controller;
+use App\Mail\NoReplyMailable;
+use App\Models\ShopkeeperAdviser;
 use App\Models\User;
 use App\Models\UserBank;
-use App\Models\ShopkeeperAdviser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Mail\NoReplyMailable;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
@@ -35,34 +34,34 @@ class StoreUsersController extends Controller
 
         if ($request->role == 'Advisers') {
             $fields = [
-                'name'=>'required',
-                'email'=>'required|unique:users,email',
-                'phone'=>'required',
-                'document'=>'required',
-                'city'=>'required',
-                'address'=>'required',
-                ];
+                'name' => 'required',
+                'email' => 'required|unique:users,email',
+                'phone' => 'required',
+                'document' => 'required',
+                'city' => 'required',
+                'address' => 'required',
+            ];
         }
 
         $message = [
-            'name.required'=>'El nombre es requerido',
-            'email.required'=>'El email es requerido',
-            'phone.required'=>'El teléfono es requerido',
-            'document.required'=>'El # de documento es requerido',
-            'city.required'=>'La ciudad es requerida',
-            'address.required'=>'La dirección es requerida',
-            'password.required'=>'La contraseña es requerida',
-            'unique'=>'El :attribute debe ser unico',
+            'name.required' => 'El nombre es requerido',
+            'email.required' => 'El email es requerido',
+            'phone.required' => 'El teléfono es requerido',
+            'document.required' => 'El # de documento es requerido',
+            'city.required' => 'La ciudad es requerida',
+            'address.required' => 'La dirección es requerida',
+            'password.required' => 'La contraseña es requerida',
+            'unique' => 'El :attribute debe ser unico',
         ];
 
         if ($request->input('role') == 'Distributor') {
             $fields2 = [
-                'developerMode'=>'required',
+                'developerMode' => 'required',
             ];
 
             $fields = $fields + $fields2;
             $message2 = [
-                'developerMode.required' => 'El modo desarrollador es requerido'
+                'developerMode.required' => 'El modo desarrollador es requerido',
             ];
 
             $message = $message + $message2;
@@ -70,14 +69,14 @@ class StoreUsersController extends Controller
 
         if ($request->input('role') == 'Supplier') {
             $fields2 = [
-                'priority'=>'required',
-                'max_queue'=>'required',
-                'balanceMinAmount'=>'required',
+                'priority' => 'required',
+                'max_queue' => 'required',
+                'balanceMinAmount' => 'required',
             ];
             $fields = $fields + $fields2;
             $message2 = [
-                'priority.required'=>'La prioridad es requerida',
-                'max_queue.required'=>'El valor de cola maximo es requerido',
+                'priority.required' => 'La prioridad es requerida',
+                'max_queue.required' => 'El valor de cola maximo es requerido',
                 'balanceMinAmount.required' => 'El monto mínimo de saldos es requerido',
             ];
 
@@ -87,11 +86,11 @@ class StoreUsersController extends Controller
         $this->validate($request, $fields, $message);
 
         $roleID = $request->input('roleID');
-        $user = new User();
+        $user = new User;
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->role = $request->input('role');
-        $user->phone =  $request->input('phone');
+        $user->phone = $request->input('phone');
         $user->document_type = $request->input('document_type');
         $user->document = $request->input('document');
         $user->city = $request->input('city');
@@ -119,15 +118,15 @@ class StoreUsersController extends Controller
         }
 
         if (isset($request->password)) {
-            if (strlen($request->password) < 7 || !preg_match('`[0-9]`', $request->password)
-                || !preg_match('`[a-z]`', $request->password)) {
+            if (strlen($request->password) < 7 || ! preg_match('`[0-9]`', $request->password)
+                || ! preg_match('`[a-z]`', $request->password)) {
 
                 return back()->with('unfulfilledRequirements', 'La contraseña debe tener mínimo 7 caracteres, al menos una letra y al menos un número.');
             }
 
             $user->password = Hash::make($request->input('password'));
         } else {
-            $user->password =  Hash::make($request->input('adviser'));
+            $user->password = Hash::make($request->input('adviser'));
         }
 
         $user->save();
@@ -141,7 +140,7 @@ class StoreUsersController extends Controller
 
         if (isset($request->card_ids)) {
             foreach ($request->card_ids as $id) {
-                $userBank = new UserBank();
+                $userBank = new UserBank;
                 $userBank->user_id = $user->id;
                 $userBank->card_id = intval($id);
                 $userBank->save();
@@ -149,12 +148,11 @@ class StoreUsersController extends Controller
         }
 
         if ($user->role == 'Shopkeeper' && $request->adviserID != 'none') {
-            $shopkeeperAdviser = new ShopkeeperAdviser();
+            $shopkeeperAdviser = new ShopkeeperAdviser;
             $shopkeeperAdviser->shopkeeper_id = $user->id;
             $shopkeeperAdviser->adviser_id = intval($request->input('adviserID'));
             $shopkeeperAdviser->save();
         }
-
 
         if (! isset($roleID) && $request->input('role') == 'Administrator') {
             $user->assignRole('Administrator');
@@ -178,7 +176,7 @@ class StoreUsersController extends Controller
         }
 
         $receiverEmail = $user->email;
-        $emailBody = new stdClass();
+        $emailBody = new stdClass;
         $emailBody->sender = 'Asparecargas';
 
         if (! is_null($user->brand_id)) {

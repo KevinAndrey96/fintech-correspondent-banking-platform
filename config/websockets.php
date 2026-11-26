@@ -9,7 +9,7 @@ return [
      */
     'dashboard' => [
         'port' => env('LARAVEL_WEBSOCKETS_PORT', 6001),
-        'host' =>env('LARAVEL_WEBSOCKETS_HOST')
+        'host' => env('LARAVEL_WEBSOCKETS_HOST'),
     ],
 
     /*
@@ -25,7 +25,7 @@ return [
     'apps' => [
         [
             'port' => env('LARAVEL_WEBSOCKETS_PORT', 6001),
-            'host' =>env('LARAVEL_WEBSOCKETS_HOST'),
+            'host' => env('LARAVEL_WEBSOCKETS_HOST'),
             'id' => env('PUSHER_APP_ID'),
             'name' => env('APP_NAME'),
             'key' => env('PUSHER_APP_KEY'),
@@ -34,7 +34,7 @@ return [
             'capacity' => null,
             '   enable_client_messages' => false,
             'enable_statistics' => true,
-            'encrypted' => false
+            'encrypted' => false,
         ],
     ],
 

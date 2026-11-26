@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Answers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Answer;
 
 class IndexAnswersController extends Controller

@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\TransactionField;
+use Illuminate\Database\Seeder;
 
 class TransactionFieldsSeeder extends Seeder
 {
@@ -15,7 +14,7 @@ class TransactionFieldsSeeder extends Seeder
      */
     public function run()
     {
-        $transactionFields = new TransactionField();
+        $transactionFields = new TransactionField;
         $transactionFields->document = 'Documento:';
         $transactionFields->document_type = 'Tipo de documento:';
         $transactionFields->email = 'Correo:';

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class StoreDailyPasswordUsersController extends Controller
 {
@@ -24,7 +24,6 @@ class StoreDailyPasswordUsersController extends Controller
         }
 
         return redirect()->route('users.require.daily.password')->with('passFail', 'La contraseña no coincide, por favor inténtelo otra vez.');
-
 
     }
 }

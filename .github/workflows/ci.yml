@@ -1,127 +1,90 @@
-name: CI Pipeline
+name: CI
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [main]
   pull_request:
-    branches: [ master, main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  php-lint:
-    name: PHP Syntax & Lint (${{ matrix.php-version }})
+  tests:
+    name: Pint y pruebas (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.2']
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP Environment
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath, zip
-          coverage: none
-
-      - name: Validate Composer Configuration
-        run: composer validate --no-check-all --no-check-lock
-
-      - name: Syntax Linting (app, routes, config)
-        run: |
-          echo "Linting routes..."
-          php -l routes/api.php
-          php -l routes/web.php
-          php -l routes/console.php
-          php -l routes/channels.php
-          
-          echo "Linting config files..."
-          find config -name "*.php" -exec php -l {} \;
-          
-          echo "Linting application classes..."
-          find app -name "*.php" -exec php -l {} \;
-
-  database-validation:
-    name: Database Schema & Seeds Verification (MySQL 8.0)
-    runs-on: ubuntu-latest
+        php: ['8.1', '8.2']
 
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_ROOT_PASSWORD: root_secret_password
-          MYSQL_DATABASE: fintech_correspondents
-          MYSQL_USER: fintech_user
-          MYSQL_PASSWORD: fintech_secret
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: fintech_test
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=5s --health-retries=5
+        options: >-
+          --health-cmd="mysqladmin ping -proot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: fintech_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      CACHE_DRIVER: array
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Wait for MySQL
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath, zip, gd, sockets
+          coverage: none
+
+      - run: composer validate --strict --no-check-lock
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+
+      - run: composer install --no-interaction --no-progress --prefer-dist
+
+      - run: vendor/bin/pint --test
+
+      - name: Preparar entorno, migraciones y Passport
         run: |
-          while ! mysqladmin ping -h 127.0.0.1 -u root -proot_secret_password --silent; do
-            echo "Waiting for MySQL to be ready..."
-            sleep 2
-          done
+          cp .env.example .env
+          php artisan key:generate
+          php artisan migrate --force
+          php artisan passport:keys --force
+          php artisan passport:client --personal --name=ci --no-interaction
 
-      - name: Apply Database DDL Schema
-        run: |
-          echo "Importing database/schema.sql..."
-          mysql -h 127.0.0.1 -u fintech_user -pfintech_secret fintech_correspondents < database/schema.sql
-          echo "Schema import successful!"
+      - run: vendor/bin/phpunit
 
-      - name: Apply Database Seeds
-        run: |
-          echo "Importing database/seeds.sql..."
-          mysql -h 127.0.0.1 -u fintech_user -pfintech_secret fintech_correspondents < database/seeds.sql
-          echo "Seeds import successful!"
-
-      - name: Verify Seed Integrity & Record Counts
-        run: |
-          mysql -h 127.0.0.1 -u fintech_user -pfintech_secret fintech_correspondents -e "
-            SELECT 'Products count' AS metric, COUNT(*) AS count FROM products;
-            SELECT 'Users count' AS metric, COUNT(*) AS count FROM users;
-            SELECT 'Transactions count' AS metric, COUNT(*) AS count FROM transactions;
-            SELECT 'Balances count' AS metric, COUNT(*) AS count FROM balances;
-            SELECT 'Permissions count' AS metric, COUNT(*) AS count FROM permissions;
-            SELECT 'Roles count' AS metric, COUNT(*) AS count FROM roles;
-          "
-          
-          # Assert minimum record thresholds
-          PROD_COUNT=$(mysql -h 127.0.0.1 -u fintech_user -pfintech_secret -N -s fintech_correspondents -e "SELECT COUNT(*) FROM products;")
-          USER_COUNT=$(mysql -h 127.0.0.1 -u fintech_user -pfintech_secret -N -s fintech_correspondents -e "SELECT COUNT(*) FROM users;")
-          TX_COUNT=$(mysql -h 127.0.0.1 -u fintech_user -pfintech_secret -N -s fintech_correspondents -e "SELECT COUNT(*) FROM transactions;")
-          
-          if [ "$PROD_COUNT" -lt 10 ]; then
-            echo "ERROR: Expected at least 10 products, found $PROD_COUNT"
-            exit 1
-          fi
-          
-          if [ "$USER_COUNT" -lt 9 ]; then
-            echo "ERROR: Expected at least 9 users, found $USER_COUNT"
-            exit 1
-          fi
-          
-          if [ "$TX_COUNT" -lt 9 ]; then
-            echo "ERROR: Expected at least 9 transactions, found $TX_COUNT"
-            exit 1
-          fi
-          
-          echo "All database verification assertions passed successfully!"
-
-  docker-validation:
-    name: Docker Compose Specification Validation
+  docker:
+    name: Imagen Docker
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Validate Docker Compose Config
-        run: docker compose config
+      - run: docker compose config --quiet
+
+      - run: docker build -f docker/php/Dockerfile -t fintech-correspondent-banking .
+
+      - name: Verificar PHP y extensiones de la imagen
+        run: docker run --rm fintech-correspondent-banking php -m | grep -E '^(pdo_mysql|redis|bcmath|gd|intl)$'

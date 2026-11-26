@@ -71,7 +71,7 @@
                                      <div class="input-group  my-3">
                                       <label for="image" id="image_label" class="mx-3 my-1">Recibo</label>
                                       @if(isset($balance->boucher))
-                                          <img class="img-thumbnail img-fluid" src="{{ 'https://corresponsales.asparecargas.net/'.$balance->boucher }}" width="100" alt = "No carga">
+                                          <img class="img-thumbnail img-fluid" src="{{ config('services.media_mirror.url').'/'.$balance->boucher }}" width="100" alt = "No carga">
                                       @endif
                                       <input style="border: gray 0.5px solid; border-radius: 20px" class="form-control form-control-sm" type="file" id="image" name="image" required>
                                      </div>

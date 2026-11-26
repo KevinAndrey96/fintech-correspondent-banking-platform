@@ -3,12 +3,12 @@
 namespace App\Exports;
 
 use App\Models\Profit;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class ProfitsExport implements FromView, ShouldAutoSize
 {
@@ -32,7 +32,7 @@ class ProfitsExport implements FromView, ShouldAutoSize
     {
         if (Auth::user()->role == 'Administrator') {
             return view('profit.excelExport', [
-                'profits' => Profit::whereBetween('date',[$this->dateFrom, $this->dateTo])->get()
+                'profits' => Profit::whereBetween('date', [$this->dateFrom, $this->dateTo])->get(),
             ]);
         }
 
@@ -40,12 +40,12 @@ class ProfitsExport implements FromView, ShouldAutoSize
             if (Auth::user()->role == 'Saldos') {
 
                 return view('profit.excelExport', [
-                    'profits' => Profit::where('administrator_id', '=', Auth::user()->id)->whereBetween('date',[$this->dateFrom, $this->dateTo])->get()
+                    'profits' => Profit::where('administrator_id', '=', Auth::user()->id)->whereBetween('date', [$this->dateFrom, $this->dateTo])->get(),
                 ]);
             }
 
             return view('profit.excelExport', [
-                'profits' => Profit::where('user_id','=',Auth::user()->id)->whereBetween('date',[$this->dateFrom, $this->dateTo])->get()
+                'profits' => Profit::where('user_id', '=', Auth::user()->id)->whereBetween('date', [$this->dateFrom, $this->dateTo])->get(),
             ]);
         }
     }

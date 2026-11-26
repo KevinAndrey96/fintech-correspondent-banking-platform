@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Traits\ReassignTransaction;
+use Illuminate\Console\Command;
 
 /**
  * To Execute in Cpanel is necessary write this command
@@ -12,6 +12,7 @@ use App\Traits\ReassignTransaction;
 class TransactionReassign extends Command
 {
     use ReassignTransaction;
+
     /**
      * The name and signature of the console command.
      *

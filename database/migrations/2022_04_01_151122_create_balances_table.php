@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('balances', function (Blueprint $table) {
-            $table->engine="InnoDB";
+            $table->engine = 'InnoDB';
             $table->id();
             $table->bigInteger('user_id')->unsigned();
             $table->double('amount')->default(0);
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('boucher')->nullable();
             $table->string('comment')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete("cascade");
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

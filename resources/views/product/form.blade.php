@@ -38,7 +38,7 @@
                                 <div class="col-md-3">
                                     <div class="input-group input-group-static mb-4">
                                         <label for="productType" class="ms-0">Seleccionar tipo de producto</label>
-                                        @if (getenv('COUNTRY_NAME') == 'ECUADOR')
+                                        @if (config('platform.country_name') == 'ECUADOR')
                                             <select id="productType" name="productType" class="form-control ms-0" aria-label="Default select example" onchange="showGirosInput()" required>
                                         @else
                                                 <select id="productType" name="productType" class="form-control ms-0" aria-label="Default select example" required>
@@ -132,7 +132,7 @@
                                         <input type="number" class="form-control" name="reassignment_minutes" value="{{ isset($product->reassignment_minutes)?$product->reassignment_minutes:old('reassignment_minutes') }}" id="reassignment_minutes" placeholder="" min="2" required>
                                     </div>
                                 </div>
-                                @if (getenv('COUNTRY_NAME') == 'ECUADOR')
+                                @if (config('platform.country_name') == 'ECUADOR')
                                     @if ($mode=="Editar")
                                         @if ($product->product_type == 'Deposit' )
                                             <div class="col-md-3" id="girosDiv">

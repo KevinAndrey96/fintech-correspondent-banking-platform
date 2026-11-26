@@ -30,7 +30,6 @@ class ProductField extends Model
         'num_jineteo',
         'hours',
         'reassignment_minutes',
-        'fixed_commission'
+        'fixed_commission',
     ];
-
 }

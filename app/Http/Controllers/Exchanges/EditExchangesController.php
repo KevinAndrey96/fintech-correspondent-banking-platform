@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Exchanges;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Exchange;
 
 class EditExchangesController extends Controller

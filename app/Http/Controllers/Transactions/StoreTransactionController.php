@@ -3,35 +3,29 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use App\Models\Transaction;
-use App\Models\Product;
 use App\Models\Commission;
+use App\Models\Product;
+use App\Models\Transaction;
 use App\Models\TransactionField;
 use App\Models\UserTransactionLimit;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StoreTransactionController extends Controller
 {
     public function store(Request $request)
     {
         $fields = [
-            'transactionAmount'=> 'required|string',
-            'transactionType'=> 'required|string',
-            "productID" => 'required|string'
+            'transactionAmount' => 'required|string',
+            'transactionType' => 'required|string',
+            'productID' => 'required|string',
         ];
 
         $message = [
             'transactionAmount.required' => 'El monto de la transacción es requerido',
             'transactionType.required' => 'El tipo de la transacción es requerido',
-            'productID.required' => 'El id del producto es requerido'
+            'productID.required' => 'El id del producto es requerido',
         ];
 
         $this->validate($request, $fields, $message);
@@ -46,7 +40,7 @@ class StoreTransactionController extends Controller
 
         $userTransactionLimits = UserTransactionLimit::where([
             ['user_id', Auth::user()->id],
-            ['product_id', $productID]
+            ['product_id', $productID],
         ])->first();
 
         if (isset($userTransactionLimits)) {
@@ -60,14 +54,14 @@ class StoreTransactionController extends Controller
         }
 
         if ($amount < $minAmount || $amount > $maxAmount) {
-            if (getenv('COUNTRY_NAME') == 'ECUADOR' && $giros == 1) {
+            if (config('platform.country_name') == 'ECUADOR' && $giros == 1) {
                 return redirect('/giros/create?giros=1')
                     ->with('limitExceeded', 'Supero el límite del monto permitido por transacción para el producto seleccionado,
-                        el monto mínimo debe ser de $' . number_format(strval($minAmount), 2, ',', '.') . ' y el monto máximo de $' . number_format(strval($maxAmount), 2, ',', '.'));
+                        el monto mínimo debe ser de $'.number_format(strval($minAmount), 2, ',', '.').' y el monto máximo de $'.number_format(strval($maxAmount), 2, ',', '.'));
             } else {
                 return redirect('/transactions/create')
                     ->with('limitExceeded', 'Supero el límite del monto permitido por transacción para el producto seleccionado,
-                        el monto mínimo debe ser de $' . number_format(strval($minAmount), 2, ',', '.') . ' y el monto máximo de $' . number_format(strval($maxAmount), 2, ',', '.'));
+                        el monto mínimo debe ser de $'.number_format(strval($minAmount), 2, ',', '.').' y el monto máximo de $'.number_format(strval($maxAmount), 2, ',', '.'));
             }
         }
 
@@ -75,7 +69,7 @@ class StoreTransactionController extends Controller
          * We validate that the type present in the request is congruent with the product type
          */
         if ($product->product_type !== $request->input('transactionType')) {
-            if (getenv('COUNTRY_NAME') == 'ECUADOR' && $giros == 1) {
+            if (config('platform.country_name') == 'ECUADOR' && $giros == 1) {
                 return redirect('/giros/create?giros=1')->with('insufficientBalance', 'Se ha presentado un error inesperado en la plataforma, por favor intentelo de nuevo');
             } else {
                 return redirect('/transactions/create')->with('insufficientBalance', 'Se ha presentado un error inesperado en la plataforma, por favor intentelo de nuevo');
@@ -83,7 +77,7 @@ class StoreTransactionController extends Controller
         }
 
         if ($request->transactionType == Transaction::TYPE_DEPOSIT && floatval(Auth::user()->balance) < $amount) {
-            if (getenv('COUNTRY_NAME') == 'ECUADOR' && $giros == 1) {
+            if (config('platform.country_name') == 'ECUADOR' && $giros == 1) {
                 return redirect('/giros/create?giros=1')->with('insufficientBalance', 'No tiene saldo suficiente para realizar el giro');
             } else {
                 return redirect('/transactions/create')->with('insufficientBalance', 'No tiene saldo suficiente para realizar la transacción');
@@ -93,7 +87,7 @@ class StoreTransactionController extends Controller
         if ($giros != 1) {
             $commission = Commission::where([
                 ['user_id', '=', Auth::user()->id],
-                ['product_id', '=', $product->id]
+                ['product_id', '=', $product->id],
             ])->first();
 
             if (is_null($commission)) {
@@ -102,15 +96,14 @@ class StoreTransactionController extends Controller
         }
 
         $transactionFields = TransactionField::first();
-        $transaction = new Transaction();
+        $transaction = new Transaction;
         $transaction->product_id = $product->id;
         $transaction->amount = $amount;
         $transaction->date = Carbon::now();
         $transaction->type = $product->product_type;
         $transaction->status = 'hold';
 
-        if ($transaction->product->are_default_fields)
-        {
+        if ($transaction->product->are_default_fields) {
 
             return view('transactions.clientDataCreate', compact('transaction', 'product', 'giros', 'transactionFields', 'userTransactionLimits'));
         }

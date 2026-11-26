@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dateTime('last_login')->nullable();
-            //$table->dropColumn('last_login');
+            // $table->dropColumn('last_login');
         });
     }
 

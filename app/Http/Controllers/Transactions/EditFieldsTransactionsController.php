@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\TransactionField;
 
 class EditFieldsTransactionsController extends Controller

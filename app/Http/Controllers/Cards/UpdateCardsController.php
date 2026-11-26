@@ -14,15 +14,15 @@ class UpdateCardsController extends Controller
     public function __invoke(Request $request)
     {
         $fields = [
-            'cardIMG'=>'mimes:jpg,jpeg,png',
-            'cardPDF'=>'mimes:pdf',
+            'cardIMG' => 'mimes:jpg,jpeg,png',
+            'cardPDF' => 'mimes:pdf',
             'qrIMG' => 'mimes:jpg,jpeg,png',
-            'bank'=> 'required',
+            'bank' => 'required',
             'cardID' => 'string',
         ];
 
         $message = [
-            'required'=>':attribute es requerido',
+            'required' => ':attribute es requerido',
         ];
 
         $this->validate($request, $fields, $message);
@@ -38,9 +38,9 @@ class UpdateCardsController extends Controller
         if ($request->hasFile('cardPDF')) {
             $pathName = sprintf('card_pdf/%s.pdf', $card->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('cardPDF')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
 
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
@@ -50,18 +50,18 @@ class UpdateCardsController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\card_pdf\\' . $card->id . '.pdf')
+                                Storage::path('public\card_pdf\\'.$card->id.'.pdf')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'card_pdf'
-                    ]
-                ]
+                        'contents' => 'card_pdf',
+                    ],
+                ],
             ]);
-            $card->cardPDF = '/storage/card_pdf/' . $card->id . '.pdf';
+            $card->cardPDF = '/storage/card_pdf/'.$card->id.'.pdf';
             $card->save();
             unlink(str_replace('\\', '/', storage_path('app/public/card_pdf/'.$card->id.'.pdf')));
         }
@@ -69,9 +69,9 @@ class UpdateCardsController extends Controller
         if ($request->hasFile('cardIMG')) {
             $pathName = sprintf('card_img/%s.png', $card->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('cardIMG')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
                     [
@@ -80,18 +80,18 @@ class UpdateCardsController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\card_img\\' . $card->id . '.png')
+                                Storage::path('public\card_img\\'.$card->id.'.png')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'card_img'
-                    ]
-                ]
+                        'contents' => 'card_img',
+                    ],
+                ],
             ]);
-            $card->cardIMG = '/storage/card_img/' . $card->id . '.png';
+            $card->cardIMG = '/storage/card_img/'.$card->id.'.png';
             $card->save();
             unlink(str_replace('\\', '/', storage_path('app/public/card_img/'.$card->id.'.png')));
         }
@@ -99,9 +99,9 @@ class UpdateCardsController extends Controller
         if ($request->hasFile('qrIMG')) {
             $pathName = sprintf('card_qr_img/%s.png', $card->id);
             Storage::disk('public')->put($pathName, file_get_contents($request->file('qrIMG')));
-            $client = new Client();
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer."/upload.php";
+            $client = new Client;
+            $urlServer = config('services.media_mirror.url');
+            $url = $urlServer.'/upload.php';
             $client->request(RequestAlias::METHOD_POST, $url, [
                 'multipart' => [
                     [
@@ -110,18 +110,18 @@ class UpdateCardsController extends Controller
                             str_replace(
                                 '\\',
                                 '/',
-                                Storage::path('public\card_qr_img\\' . $card->id . '.png')
+                                Storage::path('public\card_qr_img\\'.$card->id.'.png')
                             ),
                             'r'
-                        )
+                        ),
                     ],
                     [
                         'name' => 'path',
-                        'contents' => 'card_qr_img'
-                    ]
-                ]
+                        'contents' => 'card_qr_img',
+                    ],
+                ],
             ]);
-            $card->qr_img = '/storage/card_qr_img/' . $card->id . '.png';
+            $card->qr_img = '/storage/card_qr_img/'.$card->id.'.png';
             $card->save();
             unlink(str_replace('\\', '/', storage_path('app/public/card_qr_img/'.$card->id.'.png')));
         }

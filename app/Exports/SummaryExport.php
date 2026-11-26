@@ -3,12 +3,12 @@
 namespace App\Exports;
 
 use App\Models\Summary;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class SummaryExport implements FromView, ShouldAutoSize
 {
@@ -23,14 +23,14 @@ class SummaryExport implements FromView, ShouldAutoSize
 
     public function forDateFrom($dateFrom)
     {
-        $this->dateFrom = $dateFrom . ' 00:00:00';
+        $this->dateFrom = $dateFrom.' 00:00:00';
 
         return $this;
     }
 
     public function forDateTo($dateTo)
     {
-        $this->dateTo = $dateTo . ' 23:59:59';
+        $this->dateTo = $dateTo.' 23:59:59';
 
         return $this;
     }
@@ -39,8 +39,9 @@ class SummaryExport implements FromView, ShouldAutoSize
     {
         if (Auth::user()->role == 'Administrator' || Auth::user()->role == 'Distributor' && isset($this->shopkeeperID)) {
             $summaries = Summary::where('user_id', $this->shopkeeperID)
-                                ->whereBetween('created_at', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                ->get();
+                ->whereBetween('created_at', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                ->get();
+
             return view('balance.summaryExcelExport', compact('summaries'));
         }
 
@@ -50,13 +51,14 @@ class SummaryExport implements FromView, ShouldAutoSize
                     'summaries' => Summary::where('user_id', '=', Auth::user()->id)
                         ->whereDate('created_at', '>=', $this->dateTo)
                         ->whereDate('created_at', '<=', $this->dateFrom)
-                        ->get()
+                        ->get(),
                 ]);
             }
+
             return view('balance.summaryExcelExport', [
                 'summaries' => Summary::where('user_id', '=', Auth::user()->id)
                     ->whereBetween('created_at', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                    ->get()
+                    ->get(),
             ]);
         }
     }

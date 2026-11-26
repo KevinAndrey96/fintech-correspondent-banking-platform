@@ -260,14 +260,14 @@
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-12 d-flex justify-content-center">
-                                                        <iframe style="width: 110%;" src="{{getenv('APP_URL')}}/balance-detail-pdf/{{$balanceModificationData['balanceID']}}" frameborder="0"></iframe>
+                                                        <iframe style="width: 110%;" src="{{config('app.url')}}/balance-detail-pdf/{{$balanceModificationData['balanceID']}}" frameborder="0"></iframe>
                                                     </div>
                                                     <div class="col-md-12 d-flex justify-content-center mt-3">
                                                         <p style="font-size: 24px;" class="text-center text-success font-weight-bold">MODIFICACIÓN DE SALDO EXITOSA</p>
                                                     </div>
                                                     <div class="col-md-12 col-sm-12 mt-3 d-flex justify-content-center">
                                                         <button class="btn btn-success bg-gradient" data-bs-dismiss="modal">Aceptar</button>
-                                                        <a target="_blank" href="{{getenv('APP_URL')}}/balance-detail-pdf/{{$balanceModificationData['balanceID']}}" class="btn btn-primary btn-gradient ms-2">Imprimir</a>
+                                                        <a target="_blank" href="{{config('app.url')}}/balance-detail-pdf/{{$balanceModificationData['balanceID']}}" class="btn btn-primary btn-gradient ms-2">Imprimir</a>
                                                     </div>
                                                 </div>
                                             </div>

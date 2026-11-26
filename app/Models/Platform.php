@@ -10,6 +10,6 @@ class Platform extends Model
     use HasFactory;
 
     protected $fillable = [
-      'is_enabled'
+        'is_enabled',
     ];
 }

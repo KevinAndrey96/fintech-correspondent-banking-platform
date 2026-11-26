@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static find($id)
  * @method static whereHas(string $string, \Closure $param)
  * @method static where(string $string, string $string1)
+ *
  * @property int $product_id
  * @property mixed $amount
  * @property Carbon|mixed $date
@@ -55,7 +56,7 @@ class Transaction extends Model
         'com_sup',
         'com_shp',
         'userIP',
-        'giros'
+        'giros',
     ];
 
     public function shopkeeper(): BelongsTo
@@ -70,7 +71,7 @@ class Transaction extends Model
 
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(User::class,'supplier_id');
+        return $this->belongsTo(User::class, 'supplier_id');
     }
 
     public function admin(): BelongsTo

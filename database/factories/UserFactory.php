@@ -23,7 +23,22 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'role' => 'Shopkeeper',
+            'phone' => $this->faker->numerify('3#########'),
+            'city' => 'Bogota',
+            'is_enabled' => 1,
+            'developer_mode' => 0,
         ];
+    }
+
+    /**
+     * Indicate that the user may use the public API.
+     *
+     * @return static
+     */
+    public function developer()
+    {
+        return $this->state(fn (): array => ['developer_mode' => 1]);
     }
 
     /**

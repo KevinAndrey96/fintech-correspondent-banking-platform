@@ -3,12 +3,12 @@
 namespace App\Exports;
 
 use App\Models\Transaction;
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class TransactionsExport implements FromView, ShouldAutoSize
 {
@@ -20,8 +20,6 @@ class TransactionsExport implements FromView, ShouldAutoSize
 
         return $this;
     }
-
-
 
     public function forProductID($product_id)
     {
@@ -49,22 +47,22 @@ class TransactionsExport implements FromView, ShouldAutoSize
         if (Auth::user()->role == 'Administrator') {
             if ($this->product_id == 'all' && $this->status == 'all') {
                 return view('transactions.excelExport',
-                            ['transactions' => Transaction::whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])->get()]);
+                    ['transactions' => Transaction::whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])->get()]);
             } elseif ($this->product_id != 'all' && $this->status == 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where('product_id', $this->product_id)
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
             } elseif ($this->product_id == 'all' && $this->status != 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where('status', 'like', $this->status)
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
             } elseif ($this->product_id != 'all' && $this->status != 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where([
-                                                                                                    ['product_id', $this->product_id],
-                                                                                                    ['status', $this->status]
-                                                                                            ])
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    ['product_id', $this->product_id],
+                    ['status', $this->status],
+                ])
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
             }
         }
 
@@ -72,27 +70,27 @@ class TransactionsExport implements FromView, ShouldAutoSize
             if ($this->product_id == 'all' && $this->status == 'all') {
                 return view('transactions.excelExport',
                     ['transactions' => Transaction::where(strtolower(Auth::user()->role).'_id', Auth::user()->id)
-                                                    ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])->get()]);
+                        ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])->get()]);
             } elseif ($this->product_id != 'all' && $this->status == 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where([
-                                                                                                    [strtolower(Auth::user()->role).'_id', Auth::user()->id] ,
-                                                                                                    ['product_id', $this->product_id]])
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    [strtolower(Auth::user()->role).'_id', Auth::user()->id],
+                    ['product_id', $this->product_id]])
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
             } elseif ($this->product_id == 'all' && $this->status != 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where([
-                                                                                                    [strtolower(Auth::user()->role).'_id', Auth::user()->id],
-                                                                                                    ['status', $this->status]])
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    [strtolower(Auth::user()->role).'_id', Auth::user()->id],
+                    ['status', $this->status]])
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
 
             } elseif ($this->product_id != 'all' && $this->status != 'all') {
                 return view('transactions.excelExport', ['transactions' => Transaction::where([
-                                                                                                    [strtolower(Auth::user()->role).'_id', Auth::user()->id],
-                                                                                                    ['product_id', $this->product_id],
-                                                                                                    ['status', 'like', $this->status]])
-                                                                                            ->whereBetween('date',[Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
-                                                                                            ->get()]);
+                    [strtolower(Auth::user()->role).'_id', Auth::user()->id],
+                    ['product_id', $this->product_id],
+                    ['status', 'like', $this->status]])
+                    ->whereBetween('date', [Carbon::parse($this->dateFrom), Carbon::parse($this->dateTo)])
+                    ->get()]);
             }
         }
         /*

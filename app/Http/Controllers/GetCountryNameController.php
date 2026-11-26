@@ -11,23 +11,21 @@ class GetCountryNameController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index()
+    {
+        $urlServer = config('services.media_mirror.url');
+        $url = $urlServer.'/transaction/detail/';
 
-        public function index()
-        {
-            $urlServer = getenv('URL_SERVER');
-            $url = $urlServer.'/transaction/detail/';
+        $responseBody = [
+            'data' => $url,
+        ];
 
-            $responseBody = [
-                'data' => $url
-            ];
-
-            return json_encode($responseBody);
-        }
+        return json_encode($responseBody);
+    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -49,7 +47,6 @@ class GetCountryNameController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

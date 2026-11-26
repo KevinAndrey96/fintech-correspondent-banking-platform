@@ -16,7 +16,6 @@ class SavePermissionAssignmentsRolesController extends Controller
         $this->roleRepository = $roleRepository;
     }
 
-
     /**
      * @throws Exception
      */

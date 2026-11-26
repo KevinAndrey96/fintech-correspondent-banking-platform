@@ -30,7 +30,7 @@ class AllTransactionsByUserResource extends JsonResource
                 'observation' => $this->observation,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
-             ]
+            ],
         ];
     }
 }

@@ -26,7 +26,7 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return SupplierProduct::where([
             ['user_id', $userID],
-            ['product_id', $productID]
+            ['product_id', $productID],
         ])->get();
     }
 }

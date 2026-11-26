@@ -10,7 +10,7 @@ class TransactionRepository implements TransactionRepositoryInterface
 {
     public function store(CreateTransactionDTO $DTO): Transaction
     {
-        $transaction = new Transaction();
+        $transaction = new Transaction;
         $transaction->shopkeeper_id = $DTO->shopkeeper->id;
         $transaction->distributor_id = $DTO->shopkeeper->distributor->id;
         $transaction->admin_id = 1;
@@ -65,7 +65,7 @@ class TransactionRepository implements TransactionRepositoryInterface
         return Transaction::where([
             ['account_number', $accountNumber],
             ['product_id', $productID],
-            ['first_transaction', '=', 1]
+            ['first_transaction', '=', 1],
         ])->get();
     }
 
@@ -73,7 +73,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     {
         return Transaction::where([
             ['account_number', $accountNumber],
-            ['product_id', $productID]
+            ['product_id', $productID],
         ])
             ->orderBy('updated_at', 'desc')
             ->get();
@@ -83,12 +83,12 @@ class TransactionRepository implements TransactionRepositoryInterface
     {
         return Transaction::where([
             ['supplier_id', $userID],
-            ['status', '=', 'hold']
+            ['status', '=', 'hold'],
         ])->get();
     }
 
     public function getBetweenDates(?bool $shopkeeper, ?bool $supplier, ?bool $distributor,
-                                    string $dateFrom, string $dateTo, int $userID)
+        string $dateFrom, string $dateTo, int $userID)
     {
         if (isset($shopkeeper)) {
             $transactions = Transaction::where('shopkeeper_id', $userID)

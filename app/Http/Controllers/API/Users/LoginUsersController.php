@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\Users;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginUserDataRequest;
-use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,27 +14,34 @@ use Symfony\Component\HttpFoundation\Response;
  *             description="Here are the endpoints of Asparecargas"
  * )
  *
- * @OA\Server(url="https://testing.asparecargas.net")
+ * @OA\Server(url=L5_SWAGGER_CONST_HOST)
  */
 class LoginUsersController extends Controller
 {
     /**
      * User Login
+     *
      * @OA\Post (
      *     path="/api/v1/user/login",
      *     tags={"Login"},
+     *
      *     @OA\RequestBody(
      *          required=true,
+     *
      *          @OA\JsonContent(
      *              type="object",
+     *
      *              @OA\Property(property="email", type="string"),
      *              @OA\Property(property="password", type="string")
      *          )
      *      ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Success Login",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(
      *                  property="message",
      *                  type="string",
@@ -44,14 +50,17 @@ class LoginUsersController extends Controller
      *              @OA\Property(
      *                   property="access_token",
      *                   type="string",
-     *                   example="***REMOVED***"
+     *                   example="<access-token>"
      *              )
      *           )
      *        ),
+     *
      *     @OA\Response(
      *          response=400,
      *          description="Bad Request",
+     *
      *          @OA\JsonContent(
+     *
      *              @OA\Property(
      *                   property="message",
      *                   type="string",
@@ -59,10 +68,13 @@ class LoginUsersController extends Controller
      *               ),
      *            )
      *         ),
+     *
      *     @OA\Response(
      *           response=403,
      *           description="Forbidden Access",
+     *
      *           @OA\JsonContent(
+     *
      *               @OA\Property(
      *                    property="message",
      *                    type="string",
@@ -71,12 +83,10 @@ class LoginUsersController extends Controller
      *             )
      *          )
      *     )
-     *
      */
-
     public function __invoke(LoginUserDataRequest $request)
     {
-        $loginData = $request->all();
+        $loginData = $request->validated();
 
         if (! auth()->attempt($loginData)) {
             return response(['message' => 'Invalid Credentials'], 400);
@@ -88,10 +98,9 @@ class LoginUsersController extends Controller
 
         $accessToken = auth()->user()->createToken('authToken')->accessToken;
 
-
         return response([
             'message' => 'Success Login',
-            'access_token' => $accessToken
+            'access_token' => $accessToken,
         ], 200);
     }
 }

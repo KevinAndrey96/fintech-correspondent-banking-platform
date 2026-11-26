@@ -5,9 +5,13 @@ namespace App\DTOs;
 class StatisticsDataDTO
 {
     private string $failedTransactions;
+
     private string $successTransactions;
+
     private string $cancelledTransactions;
+
     private string $holdTransactions;
+
     private string $acceptedTransactions;
 
     public function getFailedTransactions(): string
@@ -59,5 +63,4 @@ class StatisticsDataDTO
     {
         $this->acceptedTransactions = $acceptedTransactions;
     }
-
 }

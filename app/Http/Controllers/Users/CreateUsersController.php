@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Product;
+use App\Models\Brand;
 use App\Models\Card;
 use App\Models\User;
-use App\Models\Brand;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
 class CreateUsersController extends Controller
@@ -33,6 +32,7 @@ class CreateUsersController extends Controller
 
         if ($role == 'Saldos') {
             $cards = Card::all();
+
             return view('users.create', compact('role', 'cards', 'roles'));
         }
 
@@ -42,6 +42,7 @@ class CreateUsersController extends Controller
 
         if ($role == 'Shopkeeper') {
             $advisers = User::where('role', 'Advisers', 'roles')->get();
+
             return view('users.create', compact('role', 'advisers', 'roles'));
 
         }

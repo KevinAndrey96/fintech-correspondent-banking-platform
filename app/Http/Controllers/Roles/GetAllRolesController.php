@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Roles;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Contracts\Roles\RoleRepositoryInterface;
-use Illuminate\Http\Request;
 
 class GetAllRolesController extends Controller
 {

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Profits;
 
+use App\Http\Controllers\Controller;
+use App\Mail\NoReplyMailable;
 use App\Models\Profit;
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NoReplyMailable;
 use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
 class adminWithdrawProfitController extends Controller
@@ -25,7 +25,7 @@ class adminWithdrawProfitController extends Controller
             }
 
             $profit->administrator_id = Auth::user()->id;
-            $emailBody = new \stdClass();
+            $emailBody = new \stdClass;
             $emailBody->sender = 'Asparecargas';
             $user = User::find($profit->user_id);
             $receiverEmail = $user->email;
@@ -50,26 +50,26 @@ class adminWithdrawProfitController extends Controller
             $user->save();
 
             if ($request->hasFile('image')) {
-                $pathName = Sprintf('profits/%s.png', $profit->id);
+                $pathName = sprintf('profits/%s.png', $profit->id);
                 Storage::disk('public')->put($pathName, file_get_contents($request->file('image')));
 
-                $client = new Client();
-                $url = getenv('URL_SERVER')."/upload.php";
+                $client = new Client;
+                $url = config('services.media_mirror.url').'/upload.php';
 
                 $client->request(RequestAlias::METHOD_POST, $url, [
                     'multipart' => [
                         [
                             'name' => 'image',
                             'contents' => fopen(
-                                str_replace('\\', '/', Storage::disk('public')->path('profits/' .$profit->id . '.png')),'r'),
+                                str_replace('\\', '/', Storage::disk('public')->path('profits/'.$profit->id.'.png')), 'r'),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'profits'
-                        ]
-                    ]
+                            'contents' => 'profits',
+                        ],
+                    ],
                 ]);
-                $profit->boucher = '/storage/profits/' . $profit->id . '.png';
+                $profit->boucher = '/storage/profits/'.$profit->id.'.png';
                 $profit->save();
                 unlink(str_replace('\\', '/', storage_path('app/public/profits/'.$profit->id.'.png')));
             }

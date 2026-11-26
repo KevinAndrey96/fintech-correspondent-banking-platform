@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('daily_password')->nullable();
             $table->date('daily_password_date')->nullable();
-            //$table->dropColumn('daily_password');
-            //$table->dropColumn('daily_password_date');
+            // $table->dropColumn('daily_password');
+            // $table->dropColumn('daily_password_date');
         });
     }
 

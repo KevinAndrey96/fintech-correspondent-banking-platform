@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\TransactionField;
+use Illuminate\Http\Request;
 
 class StoreFieldsTransactionsController extends Controller
 {

@@ -4,27 +4,32 @@ namespace App\Http\Controllers\API\Transactions;
 
 use App\Http\Controllers\Controller;
 use App\UseCases\Contracts\Transactions\GetTransactionDetailUseCaseInterface;
-use Illuminate\Http\Request;
 
 /**
  * Get transaction detail
+ *
  * @OA\Get(
  *     path="/api/v1/transaction/detail/{id}",
  *     tags={"Transaction"},
+ *
  *     @OA\Parameter(
  *          name="id",
  *          in="path",
  *          required=true,
  *          description="ID of the transaction to retrieve",
+ *
  *          @OA\Schema(
  *              type="integer",
  *              format="int64"
  *          )
  *      ),
+ *
  *      @OA\Response(
  *          response=200,
  *          description="Get transaction detail",
+ *
  *          @OA\JsonContent(
+ *
  *              @OA\Property(
  *                  property="data",
  *                      type="object",
@@ -42,16 +47,18 @@ use Illuminate\Http\Request;
  *                  )
  *              )
  *          ),
+ *
  *      @OA\Response(
  *          response=401,
  *          description="Unauthenticated",
+ *
  *          @OA\JsonContent(
+ *
  *              @OA\Property(property="message", type="string", example="Unauthenticated.")
  *          )
  *      )
  *   )
  */
-
 class DetailTransactionsController extends Controller
 {
     protected GetTransactionDetailUseCaseInterface $getTransactionDetailUseCase;

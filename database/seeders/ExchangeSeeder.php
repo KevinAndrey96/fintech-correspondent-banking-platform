@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Exchange;
+use Illuminate\Database\Seeder;
 
 class ExchangeSeeder extends Seeder
 {
@@ -15,7 +14,7 @@ class ExchangeSeeder extends Seeder
      */
     public function run()
     {
-        $exchange = new Exchange();
+        $exchange = new Exchange;
         $exchange->badge = 'Pesos colombianos';
         $exchange->value = 4000;
         $exchange->save();

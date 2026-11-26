@@ -19,7 +19,7 @@ class UpdateCommissionsController extends Controller
             $amounts = explode(',', $request->input('amounts'));
             $user = User::find(Auth::user()->id);
             for ($i = 0; $i < count($ids); $i++) {
-                if ($amounts[$i] != "") {
+                if ($amounts[$i] != '') {
                     $commission = Commission::find($ids[$i]);
                     if (($user->role == 'Administrator') && ($commission->user->role == 'Distributor'
                             || $commission->user->role == 'Supplier')) {
@@ -52,8 +52,8 @@ class UpdateCommissionsController extends Controller
 
                 return back()->with('UpdaCommissionSuccess', 'Comisiones asignadas');
             }
-        } catch (Exception $e){
-            
+        } catch (Exception $e) {
+
             return back()->with('noCommissions', 'El distribuidor asociado aún no tiene comisiones asignadas');
         }
     }

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->engine="InnoDB";
+            $table->engine = 'InnoDB';
             $table->id();
             $table->unsignedBigInteger('shopkeeper_id');
             $table->unsignedBigInteger('distributor_id');
@@ -52,4 +52,3 @@ return new class extends Migration
         Schema::dropIfExists('transactions');
     }
 };
-

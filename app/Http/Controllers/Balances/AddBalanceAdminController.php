@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Balances;
 
-use App\Models\Balance;
-use App\Models\User;
-use App\Models\Summary;
 use App\Http\Controllers\Controller;
+use App\Mail\NoReplyMailable;
+use App\Models\Balance;
+use App\Models\Summary;
+use App\Models\User;
+use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client;
-use Symfony\Component\HttpFoundation\Request as RequestAlias;
-use Carbon\Carbon;
-use App\Mail\NoReplyMailable;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
 class AddBalanceAdminController extends Controller
 {
@@ -21,17 +21,17 @@ class AddBalanceAdminController extends Controller
     {
         if (Auth::user()->role == 'Administrator') {
             $user = User::find($request->input('userID'));
-            if($request->input('type') == 'Withdrawal' and $user->role == 'Shopkeeper'){
+            if ($request->input('type') == 'Withdrawal' and $user->role == 'Shopkeeper') {
                 $fields = [
-                    'amount'=>'required',
+                    'amount' => 'required',
                 ];
-            }else{
+            } else {
                 $fields = [
-                    'amount'=>'required',
+                    'amount' => 'required',
                 ];
             }
             $message = [
-                'required'=>':attribute es requerido',
+                'required' => ':attribute es requerido',
             ];
             $this->validate($request, $fields, $message);
 
@@ -40,11 +40,11 @@ class AddBalanceAdminController extends Controller
             $amount = floatval(amountFormat($request->amount));
 
             if ($amount <= 0) {
-                return redirect('/users?role='.$user->role)->with('negativeBalance','El saldo a asignar no permitido');
+                return redirect('/users?role='.$user->role)->with('negativeBalance', 'El saldo a asignar no permitido');
             }
 
-            if (getenv('COUNTRY_NAME') == 'ECUADOR' && $amount > 10000) {
-                return redirect('/users?role='.$user->role)->with('balanceNotAllowed','El máximo saldo que puedo asignar es de 10000');
+            if (config('platform.country_name') == 'ECUADOR' && $amount > 10000) {
+                return redirect('/users?role='.$user->role)->with('balanceNotAllowed', 'El máximo saldo que puedo asignar es de 10000');
             }
 
             if ($request->type == 'Withdrawal' && $amount > $user->balance) {
@@ -52,9 +52,9 @@ class AddBalanceAdminController extends Controller
             }
 
             $date = Carbon::now();
-            $balance = new Balance();
+            $balance = new Balance;
             $balance->user_id = $request->input('userID');
-            $balance->amount =  $amount;
+            $balance->amount = $amount;
             $balance->date = '';
             $balance->type = $request->input('type');
             $balance->comment = $request->input('comment');
@@ -70,7 +70,7 @@ class AddBalanceAdminController extends Controller
                 ['balanceModificationData' => ['balanceID' => $balance->id]]
             );
 
-            $summary = new Summary();
+            $summary = new Summary;
             $summary->movement_id = $balance->id;
             $summary->user_id = $request->input('userID');
             $summary->amount = $balance->amount;
@@ -93,39 +93,39 @@ class AddBalanceAdminController extends Controller
             $summary->save();
 
             if ($request->hasFile('image')) {
-                $pathName = Sprintf('balances/%s.png', $balance->id);
+                $pathName = sprintf('balances/%s.png', $balance->id);
                 Storage::disk('public')->put($pathName, file_get_contents($request->file('image')));
-                $client = new Client();
-                $url = "https://corresponsales.asparecargas.net/upload.php";
+                $client = new Client;
+                $url = config('services.media_mirror.url').'/upload.php';
                 $client->request(RequestAlias::METHOD_POST, $url, [
                     'multipart' => [
                         [
                             'name' => 'image',
                             'contents' => fopen(
-                                str_replace('\\', '/', Storage::disk('public')->path('balances/' .$balance->id . '.png')),'r'),
+                                str_replace('\\', '/', Storage::disk('public')->path('balances/'.$balance->id.'.png')), 'r'),
                         ],
                         [
                             'name' => 'path',
-                            'contents' => 'balances'
-                        ]
-                    ]
+                            'contents' => 'balances',
+                        ],
+                    ],
                 ]);
-                $balance->boucher = '/storage/balances/' . $balance->id . '.png';
+                $balance->boucher = '/storage/balances/'.$balance->id.'.png';
                 $balance->save();
                 unlink(str_replace('\\', '/', storage_path('app/public/balances/'.$balance->id.'.png')));
             }
 
             $receiverEmail = $user->email;
-            $emailBody = new \stdClass();
+            $emailBody = new \stdClass;
             $emailBody->sender = 'Asparecargas';
             $emailBody->receiver = $user->name;
             $emailSubject = 'Solicitud de saldo Personal';
-            if($balance->type == 'Deposit'){
-                $user->balance = $user->balance+$balance->amount;
+            if ($balance->type == 'Deposit') {
+                $user->balance = $user->balance + $balance->amount;
 
                 $emailBody->body = 'Su solicitud personal de recarga de saldo por valor de $'.$balance->amount.' fue aprobada.';
-            }elseif($balance->type == 'Withdrawal'){
-                $user->balance = $user->balance-$balance->amount;
+            } elseif ($balance->type == 'Withdrawal') {
+                $user->balance = $user->balance - $balance->amount;
 
                 $emailBody->body = 'Su solicitud personal de retiro de saldo por valor de $'.$balance->amount.' fue aprobada.';
             }

@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Card;
 
 class UserBank extends Model
 {
@@ -13,7 +11,7 @@ class UserBank extends Model
 
     protected $fillable = [
         'user_id',
-        'card_id'
+        'card_id',
     ];
 
     public function user()
@@ -25,5 +23,4 @@ class UserBank extends Model
     {
         return $this->belongsTo(Card::class);
     }
-
 }

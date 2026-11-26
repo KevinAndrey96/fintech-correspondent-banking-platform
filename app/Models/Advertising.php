@@ -10,6 +10,6 @@ class Advertising extends Model
     use HasFactory;
 
     protected $fillable = [
-        'advertising_url'
+        'advertising_url',
     ];
 }

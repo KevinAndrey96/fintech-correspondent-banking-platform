@@ -4,16 +4,16 @@ namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\Controller;
 use App\Models\Commission;
-use Illuminate\Http\Request;
 use App\Models\SupplierProduct;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class StoreAssignmentsProductsController extends Controller
 {
     public function __invoke(Request $request)
     {
         $user = User::find($request->input('user_id'));
-        $userID = intVal($user->id);
+        $userID = intval($user->id);
         $userRole = $user->role;
         $supplierProducts = SupplierProduct::where('user_id', $userID)->get();
         $products = $request->input('products');
@@ -27,7 +27,7 @@ class StoreAssignmentsProductsController extends Controller
             if ($userRole == 'Distributor') {
                 $assignedProducts = SupplierProduct::where('user_id', $user->id)->get();
                 $distributorCommissions = Commission::where('user_id', $user->id)->get();
-                $newProducts = array();
+                $newProducts = [];
                 foreach ($products as $product) {
                     $matchedProductID = 0;
                     foreach ($assignedProducts as $assignedProduct) {
@@ -55,7 +55,7 @@ class StoreAssignmentsProductsController extends Controller
 
             for ($i = 0; $i < count($products); $i++) {
 
-                $supplierProduct = new SupplierProduct();
+                $supplierProduct = new SupplierProduct;
                 $supplierProduct->user_id = $userID;
                 $supplierProduct->product_id = $products[$i];
                 $supplierProduct->save();
@@ -76,7 +76,7 @@ class StoreAssignmentsProductsController extends Controller
 
                     if ($shopkeeperProducts->count() == 0) {
                         for ($i = 0; $i < count($products); $i++) {
-                            $supplierProduct = new SupplierProduct();
+                            $supplierProduct = new SupplierProduct;
                             $supplierProduct->user_id = $shopkeeper->id;
                             $supplierProduct->product_id = $products[$i];
                             $supplierProduct->save();
@@ -85,15 +85,15 @@ class StoreAssignmentsProductsController extends Controller
 
                     if ($shopkeeperProducts->count() > 0) {
                         foreach ($shopkeeperProducts as $shopkeeperProduct) {
-                                $key = array_search($shopkeeperProduct->product_id, $products);
+                            $key = array_search($shopkeeperProduct->product_id, $products);
 
-                                if (! $key) {
-                                    $shopkeeperProduct->delete();
-                                }
+                            if (! $key) {
+                                $shopkeeperProduct->delete();
+                            }
                         }
 
                         for ($i = 0; $i < count($newProducts); $i++) {
-                            $supplierProduct = new SupplierProduct();
+                            $supplierProduct = new SupplierProduct;
                             $supplierProduct->user_id = $shopkeeper->id;
                             $supplierProduct->product_id = $newProducts[$i];
                             $supplierProduct->save();
@@ -106,7 +106,7 @@ class StoreAssignmentsProductsController extends Controller
         }
 
         for ($i = 0; $i < count($products); $i++) {
-            $supplierProduct = new SupplierProduct();
+            $supplierProduct = new SupplierProduct;
             $supplierProduct->user_id = $userID;
             $supplierProduct->product_id = $products[$i];
             $supplierProduct->save();
@@ -117,7 +117,7 @@ class StoreAssignmentsProductsController extends Controller
 
             foreach ($shopkeepers as $shopkeeper) {
                 for ($i = 0; $i < count($products); $i++) {
-                    $supplierProduct = new SupplierProduct();
+                    $supplierProduct = new SupplierProduct;
                     $supplierProduct->user_id = $shopkeeper->id;
                     $supplierProduct->product_id = $products[$i];
                     $supplierProduct->save();

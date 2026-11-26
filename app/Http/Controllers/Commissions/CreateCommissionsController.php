@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Models\Commission;
+use App\Models\Product;
 use App\Models\SupplierProduct;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -40,7 +39,7 @@ class CreateCommissionsController extends Controller
                 ->where('product_id', '=', $product->id)
                 ->first();
             if (is_null($commission)) {
-                $commission = new Commission();
+                $commission = new Commission;
                 $commission->user_id = $id;
                 $commission->product_id = $product->id;
                 $commission->amount = 0;
@@ -48,14 +47,13 @@ class CreateCommissionsController extends Controller
             }
         }
 
-        $productsExcept = Product::where('is_enabled',0)
+        $productsExcept = Product::where('is_enabled', 0)
             ->orWhere('is_deleted', 1)
             ->pluck('id')->toArray();
 
-        $commissions = Commission::where('user_id', $id)->whereNotIn('product_id',$productsExcept)->get();
+        $commissions = Commission::where('user_id', $id)->whereNotIn('product_id', $productsExcept)->get();
         $userProducts = SupplierProduct::where('user_id', $id)->get();
 
         return view('commissions.create', compact('commissions', 'user', 'userProducts'));
     }
-
 }

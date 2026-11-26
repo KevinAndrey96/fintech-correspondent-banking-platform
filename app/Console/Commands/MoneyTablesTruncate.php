@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Balance;
 use App\Models\Profit;
-use App\Models\Transaction;
 use App\Models\Summary;
+use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Console\Command;
 
 class MoneyTablesTruncate extends Command
 {
@@ -49,7 +49,7 @@ class MoneyTablesTruncate extends Command
 
         $users = User::all();
 
-        foreach($users as $user) {
+        foreach ($users as $user) {
             $user->balance = 0;
             $user->profit = 0;
             $user->save();

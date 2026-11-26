@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class AuthorizeShopkeeperUserController extends Controller
 {
-
     public function __invoke(Request $request)
     {
         $user = User::find($request->input('id'));
@@ -21,5 +19,4 @@ class AuthorizeShopkeeperUserController extends Controller
 
         return back();
     }
-
 }

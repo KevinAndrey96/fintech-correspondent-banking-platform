@@ -32,7 +32,7 @@ return new class extends Migration
             $table->boolean('is_enabled');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->text('google2fa_secret')->default('***REMOVED***');
+            $table->text('google2fa_secret')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

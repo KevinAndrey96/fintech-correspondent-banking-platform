@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property mixed $id
+ *
  * @method static find(int $cardID)
  */
 class Card extends Model
@@ -18,6 +19,6 @@ class Card extends Model
         'cardPDF',
         'bank',
         'min_amount',
-        'penalty'
+        'penalty',
     ];
 }

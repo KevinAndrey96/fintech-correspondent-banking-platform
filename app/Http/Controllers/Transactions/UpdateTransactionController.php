@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
-use Exception;
+use App\Models\Balance;
+use App\Models\Commission;
+use App\Models\Exchange;
+use App\Models\Summary;
+use App\Models\Transaction;
+use App\Models\User;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
-use App\Models\Transaction;
-use App\Models\Commission;
-use App\Models\User;
-use App\Models\Balance;
-use App\Models\Summary;
-use App\Models\Exchange;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Request as RequestAlias;
 
@@ -28,187 +26,169 @@ class UpdateTransactionController extends Controller
 
     public function update(Request $request)
     {
-            date_default_timezone_set('America/Bogota');
-            $transaction = Transaction::find($request->input('transaction_id'));
-            $shopkeeper = User::find($transaction->shopkeeper_id);
-            $administrator = User::find($transaction->admin_id);
-            $supplier = User::find($transaction->supplier_id);
-            $distributor = User::find($transaction->distributor_id);
-            $shopkeeper->daily_verified = 0;
-            $shopkeeper->save();
+        date_default_timezone_set('America/Bogota');
+        $transaction = Transaction::find($request->input('transaction_id'));
+        $shopkeeper = User::find($transaction->shopkeeper_id);
+        $administrator = User::find($transaction->admin_id);
+        $supplier = User::find($transaction->supplier_id);
+        $distributor = User::find($transaction->distributor_id);
+        $shopkeeper->daily_verified = 0;
+        $shopkeeper->save();
 
-            if (
-                $transaction->status != self::SUCCESSFUL_STATUS
-                && $transaction->status != self::FAILURE_STATUS
-                && $transaction->status != self::CANCELLED_STATUS
-                && Summary::where([['movement_id', $transaction->id],['movement_type','!=','Recarga de Saldo']])->first() == null
-            ) {
-                $transaction->status = $request->input('status');
-                $transaction->observation = $request->input('observation');
-                $transaction->comment = $request->input('comment');
-                $transaction->save();
+        if (
+            $transaction->status != self::SUCCESSFUL_STATUS
+            && $transaction->status != self::FAILURE_STATUS
+            && $transaction->status != self::CANCELLED_STATUS
+            && Summary::where([['movement_id', $transaction->id], ['movement_type', '!=', 'Recarga de Saldo']])->first() == null
+        ) {
+            $transaction->status = $request->input('status');
+            $transaction->observation = $request->input('observation');
+            $transaction->comment = $request->input('comment');
+            $transaction->save();
 
-                if ($request->hasFile('voucher')) {
-                    $pathName = sprintf('voucher_images/%s.png', $transaction->id);
-                    Storage::disk('public')->put($pathName, file_get_contents($request->file('voucher')));
-                    $client = new Client();
-                    $urlServer = getenv('URL_SERVER');
-                    $url = $urlServer."/upload.php";
-                        $client->request(RequestAlias::METHOD_POST, $url, [
-                            'multipart' => [
-                                [
-                                    'name' => 'image',
-                                    'contents' => fopen(
-                                        str_replace(
-                                            '\\',
-                                            '/',
-                                            Storage::path('public\voucher_images\\' . $transaction->id . '.png')
-                                        ),
-                                        'r'
-                                    )
+            if ($request->hasFile('voucher')) {
+                $pathName = sprintf('voucher_images/%s.png', $transaction->id);
+                Storage::disk('public')->put($pathName, file_get_contents($request->file('voucher')));
+                $client = new Client;
+                $urlServer = config('services.media_mirror.url');
+                $url = $urlServer.'/upload.php';
+                $client->request(RequestAlias::METHOD_POST, $url, [
+                    'multipart' => [
+                        [
+                            'name' => 'image',
+                            'contents' => fopen(
+                                str_replace(
+                                    '\\',
+                                    '/',
+                                    Storage::path('public\voucher_images\\'.$transaction->id.'.png')
+                                ),
+                                'r'
+                            ),
+                        ],
+                        [
+                            'name' => 'path',
+                            'contents' => 'voucher_images',
                                 ],
-                                [
-                                    'name' => 'path',
-                                    'contents' => 'voucher_images'
-                                ]
-                            ]
-                        ]);
+                    ],
+                ]);
 
-                    $transaction->voucher = '/storage/voucher_images/' . $transaction->id . '.png';
-                    $transaction->save();
-                    unlink(str_replace('\\', '/', storage_path('app/public/voucher_images/'.$transaction->id.'.png')));
+                $transaction->voucher = '/storage/voucher_images/'.$transaction->id.'.png';
+                $transaction->save();
+                unlink(str_replace('\\', '/', storage_path('app/public/voucher_images/'.$transaction->id.'.png')));
+            }
+
+            if ($transaction->status == self::SUCCESSFUL_STATUS) {
+                if ($transaction->giros == 0) {
+                    $commissionShop = Commission::where([
+                        ['user_id', '=', $transaction->shopkeeper_id],
+                        ['product_id', '=', $transaction->product_id],
+                    ])->first();
+
+                    $commissionDist = Commission::where([
+                        ['user_id', '=', $transaction->distributor_id],
+                        ['product_id', '=', $transaction->product_id],
+                    ])->first();
+
+                    $commissionSupp = Commission::where([
+                        ['user_id', '=', $transaction->supplier_id],
+                        ['product_id', '=', $transaction->product_id],
+                    ])->first();
+
+                    $transaction->com_shp = $commissionShop->amount;
+                    $transaction->com_dis = $commissionDist->amount - $commissionShop->amount;
+
+                    if (isset($commissionSupp)) {
+                        $transaction->com_sup = $commissionSupp->amount;
+                    }
+
+                    $transaction->com_adm = $transaction->product->product_commission -
+                        ($transaction->com_shp + $transaction->com_dis + $transaction->com_sup);
+
+                    if (isset($commissionSupp)) {
+                        $supplier->profit += $commissionSupp->amount;
+                    }
+
+                    $administrator->profit += ($transaction->com_adm + $transaction->product->fixed_commission);
+                    $distributor->profit = $distributor->profit + $commissionDist->amount - $commissionShop->amount;
+                    $shopkeeper->profit += $commissionShop->amount;
                 }
 
-                if ($transaction->status == self::SUCCESSFUL_STATUS) {
+                $supplierBalance = new Balance;
+                $shopkeeperBalance = new Balance;
+                $shopkeeperBalance->user_id = $shopkeeper->id;
+                $shopkeeperBalance->amount = $transaction->amount;
+                $shopkeeperBalance->date = Carbon::now();
+                $shopkeeperBalance->product_name = $transaction->product->product_name;
+                $shopkeeperBalance->is_valid = 1;
+                $shopkeeperBalance->indirect = 1;
+                $supplierBalance->user_id = $supplier->id;
+                $supplierBalance->amount = $transaction->amount;
+                $supplierBalance->date = Carbon::now();
+                $supplierBalance->product_name = $transaction->product->product_name;
+                $supplierBalance->is_valid = 1;
+                $supplierBalance->indirect = 1;
+                $supplierSummary = new Summary;
+                $shopkeeperSummary = new Summary;
+                $shopkeeperSummary->user_id = $shopkeeper->id;
+                $shopkeeperSummary->amount = $transaction->amount;
+                $shopkeeperSummary->previous_balance = $shopkeeper->balance;
+                $shopkeeperSummary->fixed_commission = $transaction->product->fixed_commission;
+                $shopkeeperSummary->product_name = $transaction->product->product_name;
+                $supplierSummary->user_id = $supplier->id;
+                $supplierSummary->amount = $transaction->amount;
+                $supplierSummary->previous_balance = $supplier->balance;
+                $supplierSummary->product_name = $transaction->product->product_name;
+                $supplierSummary->fixed_commission = $transaction->product->fixed_commission;
+                $exchange = Exchange::find(1);
+
+                if ($transaction->type == 'Withdrawal') {
+                    $shopkeeper->balance += $transaction->amount - $transaction->product->fixed_commission;
+                    $supplier->balance += $transaction->amount;
+                    $shopkeeperBalance->type = 'Deposit';
+                    $supplierBalance->type = 'Deposit';
+                    $supplierSummary->movement_type = 'Retiro Realizado';
+                    $shopkeeperSummary->movement_type = 'Retiro Realizado';
+                }
+
+                if ($transaction->type == 'Deposit') {
                     if ($transaction->giros == 0) {
-                        $commissionShop = Commission::where([
-                            ['user_id', '=', $transaction->shopkeeper_id],
-                            ['product_id', '=', $transaction->product_id]
-                        ])->first();
-
-                        $commissionDist = Commission::where([
-                            ['user_id', '=', $transaction->distributor_id],
-                            ['product_id', '=', $transaction->product_id]
-                        ])->first();
-
-                        $commissionSupp = Commission::where([
-                            ['user_id', '=', $transaction->supplier_id],
-                            ['product_id', '=', $transaction->product_id]
-                        ])->first();
-
-                        $transaction->com_shp = $commissionShop->amount;
-                        $transaction->com_dis = $commissionDist->amount - $commissionShop->amount;
-
-                        if (isset($commissionSupp)) {
-                            $transaction->com_sup = $commissionSupp->amount;
-                        }
-
-                        $transaction->com_adm = $transaction->product->product_commission -
-                            ($transaction->com_shp + $transaction->com_dis + $transaction->com_sup);
-
-                        if (isset($commissionSupp)) {
-                            $supplier->profit += $commissionSupp->amount;
-                        }
-
-                        $administrator->profit += ($transaction->com_adm + $transaction->product->fixed_commission);
-                        $distributor->profit = $distributor->profit + $commissionDist->amount - $commissionShop->amount;
-                        $shopkeeper->profit += $commissionShop->amount;
+                        $shopkeeper->balance -= ($transaction->amount + $transaction->product->fixed_commission);
+                        $supplier->balance -= $transaction->amount;
+                    } else {
+                        $shopkeeper->balance -= ($transaction->amount + $transaction->product->fixed_commission) / ($exchange->value);
+                        $supplier->balance -= ($transaction->amount) / ($exchange->value);
                     }
 
-                    $supplierBalance = new Balance();
-                    $shopkeeperBalance = new Balance();
-                    $shopkeeperBalance->user_id = $shopkeeper->id;
-                    $shopkeeperBalance->amount = $transaction->amount;
-                    $shopkeeperBalance->date = Carbon::now();
-                    $shopkeeperBalance->product_name = $transaction->product->product_name;
-                    $shopkeeperBalance->is_valid = 1;
-                    $shopkeeperBalance->indirect = 1;
-                    $supplierBalance->user_id = $supplier->id;
-                    $supplierBalance->amount = $transaction->amount;
-                    $supplierBalance->date = Carbon::now();
-                    $supplierBalance->product_name = $transaction->product->product_name;
-                    $supplierBalance->is_valid = 1;
-                    $supplierBalance->indirect = 1;
-                    $supplierSummary = new Summary();
-                    $shopkeeperSummary = new Summary();
-                    $shopkeeperSummary->user_id = $shopkeeper->id;
-                    $shopkeeperSummary->amount = $transaction->amount;
-                    $shopkeeperSummary->previous_balance = $shopkeeper->balance;
-                    $shopkeeperSummary->fixed_commission = $transaction->product->fixed_commission;
-                    $shopkeeperSummary->product_name = $transaction->product->product_name;
-                    $supplierSummary->user_id = $supplier->id;
-                    $supplierSummary->amount = $transaction->amount;
-                    $supplierSummary->previous_balance = $supplier->balance;
-                    $supplierSummary->product_name = $transaction->product->product_name;
-                    $supplierSummary->fixed_commission = $transaction->product->fixed_commission;
-                    $exchange = Exchange::find(1);
-
-                    if ($transaction->type == 'Withdrawal') {
-                        $shopkeeper->balance += $transaction->amount - $transaction->product->fixed_commission;
-                        $supplier->balance += $transaction->amount;
-                        $shopkeeperBalance->type = 'Deposit';
-                        $supplierBalance->type = 'Deposit';
-                        $supplierSummary->movement_type = 'Retiro Realizado';
-                        $shopkeeperSummary->movement_type = 'Retiro Realizado';
-                    }
-
-                    if ($transaction->type == 'Deposit') {
-                        if ($transaction->giros == 0) {
-                            $shopkeeper->balance -= ($transaction->amount + $transaction->product->fixed_commission);
-                            $supplier->balance -= $transaction->amount;
-                        } else {
-                            $shopkeeper->balance -= ($transaction->amount + $transaction->product->fixed_commission)/($exchange->value);
-                            $supplier->balance -= ($transaction->amount)/($exchange->value);
-                        }
-
-                        $shopkeeperBalance->type = 'Withdrawal';
-                        $supplierBalance->type = 'Withdrawal';
-                        $supplierSummary->movement_type = 'Deposito Realizado';
-                        $shopkeeperSummary->movement_type = 'Deposito Realizado';
-                    }
-
-                    $supplierSummary->next_balance = $supplier->balance;
-                    $shopkeeperSummary->next_balance = $shopkeeper->balance;
-                    $supplier->save();
-                    $distributor->save();
-                    $shopkeeper->save();
-                    $administrator->save();
-                    $transaction->save();
-                    $supplierBalance->save();
-                    $shopkeeperBalance->save();
-                    $supplierSummary->movement_id = $transaction->id;
-                    $shopkeeperSummary->movement_id = $transaction->id;
-                    $supplierSummary->save();
-                    $shopkeeperSummary->save();
-                    try {
-                        if ($shopkeeper->developer_mode && !empty($shopkeeper->webhook_url)) {
-                            $client = new Client();
-
-                            $client->request(RequestAlias::METHOD_POST, $shopkeeper->webhook_url, [
-                                'json' => [
-                                    'webhook_type' => 'TRANSACTION',
-                                    'webhook_code' => 'STATUS_UPDATED',
-                                    'transaction_id' => $transaction->id,
-                                    'environment' => getenv('PROJECT_ENVIRONMENT')
-                                ]
-                            ]);
-                        }
-                    } catch(GuzzleException $e) {
-                        error_log($e);
-                    }
-                    return redirect('/transactions');
+                    $shopkeeperBalance->type = 'Withdrawal';
+                    $supplierBalance->type = 'Withdrawal';
+                    $supplierSummary->movement_type = 'Deposito Realizado';
+                    $shopkeeperSummary->movement_type = 'Deposito Realizado';
                 }
+
+                $supplierSummary->next_balance = $supplier->balance;
+                $shopkeeperSummary->next_balance = $shopkeeper->balance;
+                $supplier->save();
+                $distributor->save();
+                $shopkeeper->save();
+                $administrator->save();
+                $transaction->save();
+                $supplierBalance->save();
+                $shopkeeperBalance->save();
+                $supplierSummary->movement_id = $transaction->id;
+                $shopkeeperSummary->movement_id = $transaction->id;
+                $supplierSummary->save();
+                $shopkeeperSummary->save();
                 try {
-                    if ($shopkeeper->developer_mode && !empty($shopkeeper->webhook_url)) {
-                        $client = new Client();
+                    if ($shopkeeper->developer_mode && ! empty($shopkeeper->webhook_url)) {
+                        $client = new Client;
 
                         $client->request(RequestAlias::METHOD_POST, $shopkeeper->webhook_url, [
                             'json' => [
                                 'webhook_type' => 'TRANSACTION',
                                 'webhook_code' => 'STATUS_UPDATED',
                                 'transaction_id' => $transaction->id,
-                                'environment' => getenv('PROJECT_ENVIRONMENT')
-                            ]
+                                'environment' => config('platform.environment'),
+                            ],
                         ]);
                     }
                 } catch (GuzzleException $e) {
@@ -217,12 +197,31 @@ class UpdateTransactionController extends Controller
 
                 return redirect('/transactions');
             }
+            try {
+                if ($shopkeeper->developer_mode && ! empty($shopkeeper->webhook_url)) {
+                    $client = new Client;
 
-        $summaryCount = Summary::where([['movement_id', $transaction->id],['movement_type','!=','Recarga de Saldo']])->get();
-
-            if ($summaryCount > 0) {
-                return redirect('/transaction/detail/'+$transaction->id)->with('existingTransaction', 'Esta transacción ya existe contacte al admin');
+                    $client->request(RequestAlias::METHOD_POST, $shopkeeper->webhook_url, [
+                        'json' => [
+                            'webhook_type' => 'TRANSACTION',
+                            'webhook_code' => 'STATUS_UPDATED',
+                            'transaction_id' => $transaction->id,
+                            'environment' => config('platform.environment'),
+                        ],
+                    ]);
+                }
+            } catch (GuzzleException $e) {
+                error_log($e);
             }
+
+            return redirect('/transactions');
+        }
+
+        $summaryCount = Summary::where([['movement_id', $transaction->id], ['movement_type', '!=', 'Recarga de Saldo']])->get();
+
+        if ($summaryCount > 0) {
+            return redirect('/transaction/detail/' + $transaction->id)->with('existingTransaction', 'Esta transacción ya existe contacte al admin');
+        }
 
         return redirect('/transactions')->with('finalizedTransaction', 'La transacción ya ha sido finalizada');
     }

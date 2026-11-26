@@ -112,5 +112,8 @@ return [
         'paths' => [
             resource_path('views/vendor/mail'),
         ],
-    ]
+    ],
+
+    'reports_to' => env('MAIL_REPORTS_TO'),
+
 ];

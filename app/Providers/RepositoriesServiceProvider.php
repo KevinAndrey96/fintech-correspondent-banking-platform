@@ -21,14 +21,13 @@ class RepositoriesServiceProvider extends ServiceProvider
      *
      * @return void
      */
-
     protected array $classes = [
         RoleRepositoryInterface::class => RoleRepository::class,
         PermissionRepositoryInterface::class => PermissionRepository::class,
         ProductRepositoryInterface::class => ProductRepository::class,
         TransactionRepositoryInterface::class => TransactionRepository::class,
-        UserRepositoryInterface::class => UserRepository::class
-        ];
+        UserRepositoryInterface::class => UserRepository::class,
+    ];
 
     public function register()
     {

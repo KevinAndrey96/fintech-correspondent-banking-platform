@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Commission;
 use App\Models\CommissionsGroup;
 use App\Models\CommissionsGroupGeneralCommission;
-use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class EditGroupCommissionsController extends Controller
@@ -21,20 +19,19 @@ class EditGroupCommissionsController extends Controller
 
         $commissions = Commission::where('user_id', Auth::user()->id)->get();
 
-        $products = array();
-        $distributorCommissions = array();
-
+        $products = [];
+        $distributorCommissions = [];
 
         foreach ($commissions as $commission) {
             if (isset($commission->product) && $commission->product->is_enabled == 1 && $commission->product->is_deleted == 0) {
                 array_push($products, $commission->product);
-                array_push( $distributorCommissions, $commission);
+                array_push($distributorCommissions, $commission);
             }
         }
 
         $products = collect($products);
 
-        $products->map(function($product) use ($commissionsGPGeneralCommission){
+        $products->map(function ($product) use ($commissionsGPGeneralCommission) {
             $product->isUsed = 0;
             $product->shopComm = 0;
             $product->distComm = 0;
@@ -52,6 +49,6 @@ class EditGroupCommissionsController extends Controller
         });
 
         return view('commissions.editGroup', ['commissionsGPGeneralCommission' => $commissionsGPGeneralCommission,
-        'products' => $products, 'commissionsGroup' => $commissionsGroup, 'distributorCommissions' => $distributorCommissions]);
+            'products' => $products, 'commissionsGroup' => $commissionsGroup, 'distributorCommissions' => $distributorCommissions]);
     }
 }

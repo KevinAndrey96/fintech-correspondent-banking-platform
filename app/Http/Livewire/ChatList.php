@@ -2,13 +2,13 @@
 
 namespace App\Http\Livewire;
 
-use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 use App\Models\Chat;
+use Livewire\Component;
 
 class ChatList extends Component
 {
     public $messages;
+
     public $transactionID;
 
     public function mount()
@@ -23,7 +23,7 @@ class ChatList extends Component
         $chatCount = Chat::where('message', $data['message']['message'])->get()->count();
 
         if ($chatCount == 0) {
-            $chat = new Chat();
+            $chat = new Chat;
             $chat->transaction_id = $data['message']['transactionID'];
             $chat->message = $data['message']['message'];
             $chat->user_role = $data['message']['userRole'];

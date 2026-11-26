@@ -3,28 +3,28 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UsersCommissionsController extends Controller
 {
- public function usersCommissions(Request $request)
- {
-     $userType = $request->input('id');
-     $role = Auth::user()->role;
-     if ($role == 'Administrator') {
-        $users = User::where('role', 'like', 'Distributor')
-                        ->orWhere('role', 'like', 'Supplier')->get();
+    public function usersCommissions(Request $request)
+    {
+        $userType = $request->input('id');
+        $role = Auth::user()->role;
+        if ($role == 'Administrator') {
+            $users = User::where('role', 'like', 'Distributor')
+                ->orWhere('role', 'like', 'Supplier')->get();
 
-        return view('commissions.users', compact('users'));
+            return view('commissions.users', compact('users'));
 
-     }
-     if ($role == 'Distributor') {
-         $users = User::where('role', 'like', 'Shopkeeper')
-                        ->where('distributor_id', '=', Auth::user()->id)->get();
+        }
+        if ($role == 'Distributor') {
+            $users = User::where('role', 'like', 'Shopkeeper')
+                ->where('distributor_id', '=', Auth::user()->id)->get();
 
-         return view('commissions.users', compact('users'));
-     }
- }
+            return view('commissions.users', compact('users'));
+        }
+    }
 }

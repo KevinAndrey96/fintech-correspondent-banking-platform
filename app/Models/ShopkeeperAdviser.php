@@ -4,15 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class ShopkeeperAdviser extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-      'shopkeeper_id',
-      'adviser_id'
+        'shopkeeper_id',
+        'adviser_id',
     ];
 
     public function shopkeeper()

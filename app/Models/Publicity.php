@@ -10,6 +10,6 @@ class Publicity extends Model
     use HasFactory;
 
     protected $fillable = [
-        'publicity_url'
+        'publicity_url',
     ];
 }

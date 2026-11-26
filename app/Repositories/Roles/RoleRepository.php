@@ -32,7 +32,6 @@ class RoleRepository implements RoleRepositoryInterface
         return Role::findById($id);
     }
 
-
     public function assignPermissions(Role $role, $permissionIDs)
     {
         $role->syncPermissions($permissionIDs);
@@ -42,7 +41,6 @@ class RoleRepository implements RoleRepositoryInterface
     {
         return Role::with('permissions')->get();
     }
-
 
     public function getNoBaseRoles()
     {
@@ -54,5 +52,4 @@ class RoleRepository implements RoleRepositoryInterface
             ['name', '!=', 'Saldos'],
         ])->get();
     }
-
 }

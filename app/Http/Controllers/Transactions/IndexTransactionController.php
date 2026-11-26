@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\transactions;
+namespace App\Http\Controllers\Transactions;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
@@ -33,15 +33,15 @@ class IndexTransactionController extends Controller
             if (Auth::user()->role == 'Supplier') {
                 $transactions = Transaction::where([
                     ['supplier_id', Auth::user()->id],
-                    ['status', 'successful']
+                    ['status', 'successful'],
                 ])
                     ->orWhere([
                         ['supplier_id', Auth::user()->id],
-                        ['status', 'failed']
+                        ['status', 'failed'],
                     ])
                     ->orWhere([
                         ['supplier_id', Auth::user()->id],
-                        ['status', 'cancelled']
+                        ['status', 'cancelled'],
                     ])
                     ->orderBy('created_at', 'desc')
                     ->get();
@@ -87,7 +87,7 @@ class IndexTransactionController extends Controller
                 ['supplier_id', Auth::user()->id],
                 ['status',  '<>', 'successful'],
                 ['status',  '<>', 'failed'],
-                ['status',  '<>', 'cancelled']
+                ['status',  '<>', 'cancelled'],
             ])
                 ->orderBy('created_at', 'desc')
                 ->get();

@@ -11,7 +11,6 @@ class FirstPasswordMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -25,6 +24,7 @@ class FirstPasswordMiddleware
         if (Auth::user()->first_login == 0) {
             return redirect()->route('users.first.password');
         }
+
         return $next($request);
     }
 }

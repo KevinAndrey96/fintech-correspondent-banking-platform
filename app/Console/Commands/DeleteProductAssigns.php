@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
 use App\Models\SupplierProduct;
+use App\Models\User;
+use Illuminate\Console\Command;
 
 class DeleteProductAssigns extends Command
 {

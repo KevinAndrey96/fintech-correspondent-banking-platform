@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Profits;
 
-use App\Models\Profit;
-use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Profit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +15,7 @@ class IndexProfitController extends Controller
 
         if (isset($shopkeeper_id)) {
             if (Auth::user()->role == 'Administrator') {
-                $profits =  Profit::where('user_id', '=', $shopkeeper_id)->orderBy('created_at', 'desc')->get();
+                $profits = Profit::where('user_id', '=', $shopkeeper_id)->orderBy('created_at', 'desc')->get();
 
                 return view('profit.index', compact('profits'));
             }

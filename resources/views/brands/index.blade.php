@@ -27,13 +27,13 @@
                                     <tr class="align-middle text-center text-sm">
                                         <td>{{$brand->domain}}</td>
                                         <td>
-                                            <a class="image-link" href="{{getenv('URL_SERVER').$brand->square_logo_url}}">
-                                                <img width="40px" class="img-fluid" src="{{getenv('URL_SERVER').$brand->square_logo_url}}">
+                                            <a class="image-link" href="{{config('services.media_mirror.url').$brand->square_logo_url}}">
+                                                <img width="40px" class="img-fluid" src="{{config('services.media_mirror.url').$brand->square_logo_url}}">
                                             </a>
                                         </td>
                                         <td>
-                                            <a class="image-link" href="{{getenv('URL_SERVER').$brand->rectangular_logo_url}}">
-                                                <img width="40px" class="img-fluid" src="{{getenv('URL_SERVER').$brand->rectangular_logo_url}}">
+                                            <a class="image-link" href="{{config('services.media_mirror.url').$brand->rectangular_logo_url}}">
+                                                <img width="40px" class="img-fluid" src="{{config('services.media_mirror.url').$brand->rectangular_logo_url}}">
                                             </a>
                                         </td>
                                         <td>

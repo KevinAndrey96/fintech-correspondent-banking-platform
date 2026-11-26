@@ -2,7 +2,4 @@
 
 namespace App\UseCases\Contracts\Roles;
 
-interface SavePermissionAssignmentsRolesUseCaseInterface
-{
-
-}
+interface SavePermissionAssignmentsRolesUseCaseInterface {}

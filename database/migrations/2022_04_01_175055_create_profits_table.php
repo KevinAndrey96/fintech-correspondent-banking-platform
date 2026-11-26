@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('profits', function (Blueprint $table) {
-            $table->engine="InnoDB";
+            $table->engine = 'InnoDB';
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('transaction_id')->nullable();
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('extra')->nullable();
             $table->string('comment')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete("set null");
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('transaction_id')->references('id')->on('users')->onDelete('set null');
         });
     }

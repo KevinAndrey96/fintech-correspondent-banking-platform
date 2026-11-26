@@ -15,7 +15,6 @@ class AdministratorSeeder extends Seeder
     /**
      * Run the database seeds.
      *
-     * @return void
      * @throws IncompatibleWithGoogleAuthenticatorException
      * @throws InvalidCharactersException
      * @throws SecretKeyTooShortException
@@ -25,7 +24,7 @@ class AdministratorSeeder extends Seeder
         /*
         $user = new User();
         $user->name = 'Administrador';
-        $user->email = 'administrator@gmail.com';
+        $user->email = 'administrator@example.com';
         $user->password = Hash::make('administrator');
         $user->role = 'Administrator';
         $user->phone = '2345432';
@@ -40,5 +39,4 @@ class AdministratorSeeder extends Seeder
         $user->assignRole('Administrator');
         */
     }
-
 }

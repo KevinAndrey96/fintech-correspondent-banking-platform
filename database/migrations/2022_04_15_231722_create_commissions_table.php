@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('commissions', function (Blueprint $table) {
-            $table->engine="InnoDB";
+            $table->engine = 'InnoDB';
             $table->id();
             $table->double('amount');
             $table->unsignedBigInteger('product_id');
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
+
     /**
      * Reverse the migrations.
      *

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Platforms;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Platform;
 
 class LockIndexPlatformController extends Controller

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Transaction;
 
 class ShopkeepersTopDateUsersController extends Controller
@@ -11,11 +10,11 @@ class ShopkeepersTopDateUsersController extends Controller
     public function __invoke()
     {
         $transactions = Transaction::all();
-        $years = array();
+        $years = [];
 
         foreach ($transactions as $transaction) {
-            $year = substr($transaction->created_at,0,-15);
-            array_push($years, intVal($year));
+            $year = substr($transaction->created_at, 0, -15);
+            array_push($years, intval($year));
 
         }
         $years = array_unique($years);

@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers\Balances;
 
-use App\Models\Balance;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Card;
-use App\Models\Product;
-
+use Illuminate\Support\Facades\Auth;
 
 class CreateBalanceController extends Controller
 {
@@ -16,8 +12,8 @@ class CreateBalanceController extends Controller
     {
         if (Auth::user()->role == 'Shopkeeper' or Auth::user()->role == 'Supplier') {
             $cards = Card::all();
-            $urlServer = getenv('URL_SERVER');
-            $countryName = getenv('COUNTRY_NAME');
+            $urlServer = config('services.media_mirror.url');
+            $countryName = config('platform.country_name');
 
             return view('balance.addBalanceShopkeeper', compact('cards', 'urlServer', 'countryName'));
         }

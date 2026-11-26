@@ -10,7 +10,7 @@ class ChangeStatusProductsController extends Controller
 {
     public function changeStatus(Request $request)
     {
-        //return $request;
+        // return $request;
         $product = Product::find($request->input('id'));
         $product->is_enabled = $request->input('status');
         $product->save();

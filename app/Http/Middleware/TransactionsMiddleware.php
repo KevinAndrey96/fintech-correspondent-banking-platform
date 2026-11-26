@@ -2,16 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Transaction;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Transaction;
+
 class TransactionsMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -23,7 +23,7 @@ class TransactionsMiddleware
 
         if (Auth::user()->role == 'Shopkeeper') {
             $transaction = Transaction::where([['shopkeeper_id', '=',  Auth::user()->id], ['status', '=', 'hold']])
-                                        ->orWhere([['shopkeeper_id', '=',  Auth::user()->id], ['status', '=', 'accepted']])->first();
+                ->orWhere([['shopkeeper_id', '=',  Auth::user()->id], ['status', '=', 'accepted']])->first();
             if (! is_null($transaction)) {
 
                 return redirect('/transactionLoad/'.$transaction->id);
@@ -36,7 +36,7 @@ class TransactionsMiddleware
             $transaction = Transaction::where([['supplier_id',  Auth::user()->id], ['status', 'accepted']])->first();
             if (! is_null($transaction)) {
 
-                return redirect('/transaction/detail/' . $transaction->id);
+                return redirect('/transaction/detail/'.$transaction->id);
             }
         }
 

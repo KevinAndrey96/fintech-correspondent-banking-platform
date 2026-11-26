@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Brand;
+use Illuminate\Http\Request;
 
 class PersonalizeLoginUserController extends Controller
 {
@@ -14,11 +14,11 @@ class PersonalizeLoginUserController extends Controller
 
         if (isset($brand)) {
             $brand = Brand::where('domain', $brand)->first();
+
             return view('auth.login', ['brand' => $brand]);
         }
 
-        return view('auth.login');;
-
+        return view('auth.login');
 
     }
 }

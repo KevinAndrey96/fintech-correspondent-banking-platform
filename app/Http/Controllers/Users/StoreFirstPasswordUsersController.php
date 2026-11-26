@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class StoreFirstPasswordUsersController extends Controller
 {
@@ -17,8 +17,8 @@ class StoreFirstPasswordUsersController extends Controller
         $pass2 = $request->input('password2');
 
         if ($pass1 == $pass2) {
-            if (strlen($pass1) < 7 || !preg_match('`[0-9]`', $pass1)
-                || !preg_match('`[a-z]`',$pass1)) {
+            if (strlen($pass1) < 7 || ! preg_match('`[0-9]`', $pass1)
+                || ! preg_match('`[a-z]`', $pass1)) {
 
                 return redirect()->route('users.first.password')->with('unfulfilledRequirements', 'La contraseña debe tener mínimo 7 caracteres, al menos una letra y al menos un número.');
             }

@@ -45,12 +45,12 @@ class StoreDistributorChangeUsersController extends Controller
             }
 
             foreach ($distributorProducts as $productID) {
-                $shopkeeperProduct = new SupplierProduct();
+                $shopkeeperProduct = new SupplierProduct;
                 $shopkeeperProduct->product_id = $productID;
                 $shopkeeperProduct->user_id = $shopkeeper->id;
                 $shopkeeperProduct->save();
 
-                $commission = new Commission();
+                $commission = new Commission;
                 $commission->user_id = $shopkeeper->id;
                 $commission->product_id = $productID;
                 $commission->amount = 0;

@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Transactions;
 
-use App\Exports\UsersExport;
-use App\Http\Controllers\Controller;
 use App\Exports\TransactionsExport;
+use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ExcelExportTransactionController extends Controller
 {
@@ -20,11 +18,11 @@ class ExcelExportTransactionController extends Controller
         $productID = $request->input('product_id');
         if ($productID != 'all') {
             $product = Product::find($request->input('product_id'));
+
             return (new TransactionsExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->forProductID($productID)->forStatus($status)->download('Transacciones de '.$product->product_name.'.xlsx');
         }
-            return (new TransactionsExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->forProductID($productID)->forStatus($status)->download('Transacciones.xlsx');
 
-
+        return (new TransactionsExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->forProductID($productID)->forStatus($status)->download('Transacciones.xlsx');
 
         /*
         $dateFrom = $request->input('dateFrom');
@@ -33,5 +31,5 @@ class ExcelExportTransactionController extends Controller
         $dateTo = Carbon::parse($dateTo);
         return (new TransactionsExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->download('Transacciones-desde-'.$dateFrom->format('d-m-Y').'-hasta-'.$dateTo->format('d-m-Y').'.xlsx');
         */
-        }
+    }
 }

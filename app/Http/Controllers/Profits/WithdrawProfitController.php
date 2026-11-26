@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Profits;
 
+use App\Http\Controllers\Controller;
 use App\Models\Profit;
 use App\Models\User;
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use GuzzleHttp\Client;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Request as RequestAlias;
-use Carbon\Carbon;
 
 class WithdrawProfitController extends Controller
 {
@@ -62,7 +59,7 @@ class WithdrawProfitController extends Controller
         $currentUser = User::find(Auth::user()->id);
         $ongoingProfit = Profit::where([
             ['user_id', '=', $currentUser->id],
-            ['is_valid', '=', null]
+            ['is_valid', '=', null],
         ])->first();
 
         if (isset($ongoingProfit)) {
@@ -81,7 +78,7 @@ class WithdrawProfitController extends Controller
             date_default_timezone_set('America/Bogota');
 
             $date = Carbon::now();
-            $profit = new Profit();
+            $profit = new Profit;
             $profit->user_id = Auth::user()->id;
             $profit->amount = $amount;
             $profit->date = $date;
@@ -95,7 +92,7 @@ class WithdrawProfitController extends Controller
         if (Auth::user()->role == 'Administrator') {
             $extra = 'Retiro administrador';
             $date = Carbon::now();
-            $profit = new Profit();
+            $profit = new Profit;
             $profit->user_id = Auth::user()->id;
             $profit->amount = $amount;
             $profit->date = $date;

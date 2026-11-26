@@ -20,12 +20,12 @@ class StoreGroupCommissionsController extends Controller
      */
     public function __invoke(Request $request)
     {
-        //Here it validates the request
+        // Here it validates the request
         $fields = [
             'name' => 'required|string',
             'products' => 'required',
             'amountsDis' => 'required',
-            'amountsShop' => 'required'
+            'amountsShop' => 'required',
         ];
 
         $message = [
@@ -34,7 +34,7 @@ class StoreGroupCommissionsController extends Controller
 
         $this->validate($request, $fields, $message);
 
-        //Here mapping $amounts and $products to float array and integer array
+        // Here mapping $amounts and $products to float array and integer array
         $products = Arr::map($request->input('products'), function ($value) {
             return intval($value);
         });
@@ -50,9 +50,9 @@ class StoreGroupCommissionsController extends Controller
         for ($i = 0; $i < count($amountsDis); $i++) {
             $commission = Commission::where([
                 ['product_id', $products[$i]],
-                ['user_id', Auth::user()->id]
-                ])
-            ->first();
+                ['user_id', Auth::user()->id],
+            ])
+                ->first();
 
             if ($amountsDis[$i] != floatval($commission->amount)) {
                 return redirect()->route('commissions.create-group')->with('systemError', 'Hubo un error en el sistema
@@ -60,8 +60,8 @@ class StoreGroupCommissionsController extends Controller
             }
         }
 
-        //If exists a commission amount that exceeded its correspondent product commission amount it will return to
-        //create commissions group with error message
+        // If exists a commission amount that exceeded its correspondent product commission amount it will return to
+        // create commissions group with error message
         for ($i = 0; $i < count($amountsDis); $i++) {
             $product = Product::find($products[$i]);
             if ($amountsDis[$i] > $product->product_commission || $amountsShop[$i] > $product->product_commission ||
@@ -71,24 +71,24 @@ class StoreGroupCommissionsController extends Controller
             }
         }
 
-        //Assigning name input
+        // Assigning name input
         $nameGroup = $request->input('name');
 
-        //Creating new commissionsGroup register
-        $commissionsGroup = new CommissionsGroup();
+        // Creating new commissionsGroup register
+        $commissionsGroup = new CommissionsGroup;
         $commissionsGroup->name = $nameGroup;
         $commissionsGroup->user_id = Auth::user()->id;
         $commissionsGroup->save();
 
-        //Creating registers to general_commissions and commissions_group_general_commissions tables
+        // Creating registers to general_commissions and commissions_group_general_commissions tables
         for ($i = 0; $i < count($products); $i++) {
-            $generalCommission = new GeneralCommission();
+            $generalCommission = new GeneralCommission;
             $generalCommission->product_id = $products[$i];
-            $generalCommission->amount_dis= $amountsDis[$i];
+            $generalCommission->amount_dis = $amountsDis[$i];
             $generalCommission->amount_shop = $amountsShop[$i];
             $generalCommission->save();
 
-            $commGPGralComm = new CommissionsGroupGeneralCommission();
+            $commGPGralComm = new CommissionsGroupGeneralCommission;
             $commGPGralComm->comm_group_id = $commissionsGroup->id;
             $commGPGralComm->gen_comm_id = $generalCommission->id;
             $commGPGralComm->save();

@@ -25,8 +25,8 @@ class TransactionDetailResource extends JsonResource
                 'amount' => $this->transactionAmount,
                 'transaction_detail' => $this->transactionDetail,
                 'product_id' => $this->productID,
-                'product_name' => $this->productName
-            ]
+                'product_name' => $this->productName,
+            ],
         ];
     }
 }

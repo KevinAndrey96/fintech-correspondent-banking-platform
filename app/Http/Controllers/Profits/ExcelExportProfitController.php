@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Profits;
 
-use App\Http\Controllers\Controller;
 use App\Exports\ProfitsExport;
-use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ExcelExportProfitController extends Controller
 {

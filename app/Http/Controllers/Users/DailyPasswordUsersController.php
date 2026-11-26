@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +24,8 @@ class DailyPasswordUsersController extends Controller
         $user->daily_password_date = Carbon::now()->format('Y-m-d');
         $user->daily_password = Hash::make($pass1);
         $user->save();
-        return redirect()->route('home');
 
+        return redirect()->route('home');
 
     }
 }

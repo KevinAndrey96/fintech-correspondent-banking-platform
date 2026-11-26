@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
+use App\Mail\SupplierInactivity;
 use App\Models\User;
+use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SupplierInactivity;
 use stdClass;
 
 class SupplierInactivityMail extends Command
@@ -43,15 +43,14 @@ class SupplierInactivityMail extends Command
     public function handle()
     {
         date_default_timezone_set('America/Bogota');
-        $urlServer = getenv('URL_SERVER');
+        $urlServer = config('services.media_mirror.url');
         $url = $urlServer;
 
         $currentDate = Carbon::now();
         $inactiveSuppliers = collect([]);
         $suppliers = User::where('role', 'Supplier')
-                         ->WhereNotNull('last_login')
-                         ->get();
-
+            ->WhereNotNull('last_login')
+            ->get();
 
         foreach ($suppliers as $supplier) {
             $last_login = Carbon::parse($supplier->last_login);
@@ -67,7 +66,7 @@ class SupplierInactivityMail extends Command
 
             foreach ($admins as $admin) {
                 $receiverEmail = $admin->email;
-                $emailBody = new stdClass();
+                $emailBody = new stdClass;
                 $emailBody->sender = 'Asparecargas';
                 $emailBody->receiver = $admin->name;
                 $emailSubject = 'Proveedores inactivos';

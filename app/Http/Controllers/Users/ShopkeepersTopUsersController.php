@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ShopkeepersTopUsersController extends Controller
@@ -14,23 +13,22 @@ class ShopkeepersTopUsersController extends Controller
     {
         $year = $request->input('year');
         $month = $request->input('month');
-        $shopkeepers = array();
+        $shopkeepers = [];
         $transactions = DB::table('transactions')
-                        ->where([
-                            ['created_at', 'like', $year.'-'.$month.'%'],
-                            ['status', 'successful']
-                        ])
-                        ->select(DB::raw('sum(amount) as acum, count(*) as num_transactions, transactions.shopkeeper_id'))
-                        ->groupBy('shopkeeper_id')
-                        ->orderBy('acum', 'desc')
-                        ->limit(10)
-                        ->get();
+            ->where([
+                ['created_at', 'like', $year.'-'.$month.'%'],
+                ['status', 'successful'],
+            ])
+            ->select(DB::raw('sum(amount) as acum, count(*) as num_transactions, transactions.shopkeeper_id'))
+            ->groupBy('shopkeeper_id')
+            ->orderBy('acum', 'desc')
+            ->limit(10)
+            ->get();
 
         foreach ($transactions as $transaction) {
-          $user = User::find($transaction->shopkeeper_id);
-          array_push($shopkeepers, $user);
+            $user = User::find($transaction->shopkeeper_id);
+            array_push($shopkeepers, $user);
         }
-
 
         return view('users.shopkeeperTop', compact('transactions', 'shopkeepers'));
     }

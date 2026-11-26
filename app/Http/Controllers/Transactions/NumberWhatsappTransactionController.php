@@ -11,7 +11,8 @@ class NumberWhatsappTransactionController extends Controller
     {
         $transactionID = $request->input('transactionID');
         $voucher = $request->input('voucher');
-        $message ='Hola, este es el comprobante de la transacción: ';
+        $message = 'Hola, este es el comprobante de la transacción: ';
+
         return view('transactions/numWP', compact('transactionID', 'voucher', 'message'));
     }
 }

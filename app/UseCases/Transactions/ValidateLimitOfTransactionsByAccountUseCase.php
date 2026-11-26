@@ -13,10 +13,10 @@ class ValidateLimitOfTransactionsByAccountUseCase implements ValidateLimitOfTran
     {
         $allowedTransaction = 0;
         $i = 0;
-        $firstTransactions =  Transaction::where([
+        $firstTransactions = Transaction::where([
             ['account_number', '=', $accountNumber],
             ['product_id', '=', $product->id],
-            ['first_transaction', '=', 1]
+            ['first_transaction', '=', 1],
         ])->get();
 
         if ($firstTransactions->count() == 0) {
@@ -25,7 +25,7 @@ class ValidateLimitOfTransactionsByAccountUseCase implements ValidateLimitOfTran
         } else {
             $accountTransactions = Transaction::where([
                 ['account_number', '=', $accountNumber],
-                ['product_id', '=', $product->id]
+                ['product_id', '=', $product->id],
             ])
                 ->orderBy('updated_at', 'desc')
                 ->get();
@@ -68,6 +68,4 @@ class ValidateLimitOfTransactionsByAccountUseCase implements ValidateLimitOfTran
         }
 
     }
-
-
 }

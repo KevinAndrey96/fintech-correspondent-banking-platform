@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Chat extends Model
 {
@@ -14,7 +13,7 @@ class Chat extends Model
         'transaction_id',
         'message',
         'user_id',
-        'user_role'
+        'user_role',
     ];
 
     public function user()

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('google2fa_secret')->default('***REMOVED***')->nullable()->change();
+            $table->text('google2fa_secret')->nullable()->change();
             $table->text('backup_google2fa_secret')->nullable();
         });
     }

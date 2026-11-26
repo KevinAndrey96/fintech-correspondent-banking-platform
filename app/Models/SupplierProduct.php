@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Product;
 
 /**
  * @property mixed $user_id
  * @property \Illuminate\Database\Eloquent\HigherOrderBuilderProxy|mixed $product_id
+ *
  * @method static where(string $string, $id)
  */
 class SupplierProduct extends Model
@@ -18,7 +17,7 @@ class SupplierProduct extends Model
 
     protected $fillable = [
         'user_id',
-        'product_id'
+        'product_id',
     ];
 
     public function users()
@@ -40,5 +39,4 @@ class SupplierProduct extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
 }

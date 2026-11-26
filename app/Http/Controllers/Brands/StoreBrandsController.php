@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Brands;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Brand;
+use Illuminate\Http\Request;
 
 class StoreBrandsController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $brand = new Brand();
+        $brand = new Brand;
         $brand->domain = $request->input('domain');
         $brand->primary_color = $request->input('primary_color');
         $brand->save();
@@ -20,7 +20,7 @@ class StoreBrandsController extends Controller
             $path = 'square_logo';
             $fileName = strval($brand->id);
             uploadFile($file, $fileName, $path);
-            $brand->square_logo_url = '/storage/' . $path . '/' . $fileName . '.png';
+            $brand->square_logo_url = '/storage/'.$path.'/'.$fileName.'.png';
             $brand->save();
         }
 
@@ -29,7 +29,7 @@ class StoreBrandsController extends Controller
             $path = 'rectangular_logo';
             $fileName = strval($brand->id);
             uploadFile($file, $fileName, $path);
-            $brand->rectangular_logo_url = '/storage/' . $path . '/' . $fileName . '.png';
+            $brand->rectangular_logo_url = '/storage/'.$path.'/'.$fileName.'.png';
             $brand->save();
         }
 
@@ -38,7 +38,7 @@ class StoreBrandsController extends Controller
             $path = 'distributor_banner';
             $fileName = strval($brand->id);
             uploadFile($file, $fileName, $path);
-            $brand->banner = '/storage/' . $path . '/' . $fileName . '.png';
+            $brand->banner = '/storage/'.$path.'/'.$fileName.'.png';
             $brand->save();
         }
 

@@ -30,7 +30,7 @@ class StoreTransactionLimitsUsersController extends Controller
 
         $userTransactionLimits = UserTransactionLimit::where([
             ['user_id', $userID],
-            ['product_id', $productID]
+            ['product_id', $productID],
         ])
             ->first();
 
@@ -38,7 +38,7 @@ class StoreTransactionLimitsUsersController extends Controller
             $userTransactionLimits->delete();
         }
 
-        $userTransactionLimits = new UserTransactionLimit();
+        $userTransactionLimits = new UserTransactionLimit;
         $userTransactionLimits->user_id = $userID;
         $userTransactionLimits->product_id = $productID;
         $userTransactionLimits->lower_limit = $lowerLimit;

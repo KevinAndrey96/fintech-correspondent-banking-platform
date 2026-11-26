@@ -20,7 +20,7 @@ class ProductsResource extends JsonResource
                 'id' => $this->id,
                 'product_name' => $this->product_name,
                 'product_description' => $this->product_description,
-                'product_logo' => getenv('APP_URL').$this->product_logo,
+                'product_logo' => config('app.url').$this->product_logo,
                 'product_commission' => $this->product_commission,
                 'product_type' => $this->product_type,
                 'client_name' => $this->client_name,
@@ -35,8 +35,8 @@ class ProductsResource extends JsonResource
                 'field_names' => $this->field_names,
                 'min_amount' => $this->min_amount,
                 'max_amount' => $this->max_amount,
-                'category' => $this->category
-            ]
+                'category' => $this->category,
+            ],
         ];
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Cards;
 
 use App\Http\Controllers\Controller;
 use App\Models\Card;
-use Illuminate\Http\Request;
 
 class EditCardsController extends Controller
 {

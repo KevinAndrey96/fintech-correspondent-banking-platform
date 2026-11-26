@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Commissions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Commission;
 use App\Models\SupplierProduct;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class IndexCommissionsController extends Controller
@@ -21,7 +21,7 @@ class IndexCommissionsController extends Controller
 
         if (isset($shopkeeper_id)) {
             if (Auth::user()->role == 'Administrator') {
-                $commissions =  Commission::where('user_id', '=', $shopkeeper_id)->get();
+                $commissions = Commission::where('user_id', '=', $shopkeeper_id)->get();
 
                 return view('commissions.index', compact('commissions'));
             }
@@ -29,6 +29,7 @@ class IndexCommissionsController extends Controller
 
         if (Auth::user()->role == 'Administrator') {
             $commissions = Commission::where('user_id', '=', Auth::user()->id)->get();
+
             return view('commissions.index', compact('commissions'));
         }
 

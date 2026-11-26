@@ -16,7 +16,7 @@ class UserTransactionLimit extends Model
         'user_id',
         'product_id',
         'upper_limit',
-        'lower_limit'
+        'lower_limit',
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

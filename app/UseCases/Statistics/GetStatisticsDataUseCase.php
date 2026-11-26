@@ -4,7 +4,6 @@ namespace App\UseCases\Statistics;
 
 use App\Models\Transaction;
 use App\UseCases\Contracts\Statistics\GetStatisticsDataUseCaseInterface;
-use Illuminate\Support\Facades\Auth;
 
 class GetStatisticsDataUseCase implements GetStatisticsDataUseCaseInterface
 {
@@ -35,14 +34,14 @@ class GetStatisticsDataUseCase implements GetStatisticsDataUseCaseInterface
         if ($role == 'Shopkeeper' || $role == 'Supplier') {
             $failedTransactions = Transaction::where([
                 ($role == 'Shopkeeper') ? ['shopkeeper_id', $userID] : ['supplier_id', $userID],
-                ['status', 'failed']
+                ['status', 'failed'],
             ])
                 ->whereBetween('date', [$dateFrom, $dateTo])
                 ->count();
 
             $successTransactions = Transaction::where([
                 ($role == 'Shopkeeper') ? ['shopkeeper_id', $userID] : ['supplier_id', $userID],
-                ['status', 'successful']
+                ['status', 'successful'],
             ])
                 ->whereBetween('date', [$dateFrom, $dateTo])
                 ->count();
@@ -51,14 +50,14 @@ class GetStatisticsDataUseCase implements GetStatisticsDataUseCaseInterface
 
             $acceptedTransactions = Transaction::where([
                 ($role == 'Shopkeeper') ? ['shopkeeper_id', $userID] : ['supplier_id', $userID],
-                ['status', 'accepted']
+                ['status', 'accepted'],
             ])
                 ->whereBetween('date', [$dateFrom, $dateTo])
                 ->count();
 
             $holdTransactions = Transaction::where([
                 ($role == 'Shopkeeper') ? ['shopkeeper_id', $userID] : ['supplier_id', $userID],
-                ['status', 'hold']
+                ['status', 'hold'],
             ])
                 ->whereBetween('date', [$dateFrom, $dateTo])
                 ->count();
@@ -71,7 +70,7 @@ class GetStatisticsDataUseCase implements GetStatisticsDataUseCaseInterface
             'holdTransactions' => $holdTransactions,
             'acceptedTransactions' => $acceptedTransactions,
             'userRole' => $role,
-            'userID' => $userID
+            'userID' => $userID,
         ];
 
         return $data;

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Auth;
 
 class SupplierTurnOffPlatform extends Command
 {
@@ -36,9 +35,5 @@ class SupplierTurnOffPlatform extends Command
      *
      * @return int
      */
-    public function handle()
-    {
-
-
-    }
+    public function handle() {}
 }

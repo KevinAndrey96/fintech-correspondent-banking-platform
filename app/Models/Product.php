@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Commission;
-use App\Models\SupplierProduct;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @method static find(mixed $productID)
  * @method static where(string $string, int $int)
  * @method static whereIn(string $string, $shopkeeperProducts)
+ *
  * @property mixed $product_name
  * @property mixed $product_type
  * @property mixed $product_description
@@ -67,14 +66,13 @@ class Product extends Model
         'giros',
         'is_deleted',
         'are_default_fields',
-        'field_names'
+        'field_names',
     ];
-
 
     public function shopkeepers()
     {
-    //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-    return $this->belongsToMany(
+        // return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
+        return $this->belongsToMany(
             User::class,
             'user_product',
             'product_id',

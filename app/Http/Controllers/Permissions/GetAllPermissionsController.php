@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Permissions;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Contracts\Permissions\PermissionRepositoryInterface;
-use Illuminate\Http\Request;
 
 class GetAllPermissionsController extends Controller
 {
@@ -14,7 +13,6 @@ class GetAllPermissionsController extends Controller
     {
         $this->permissionRepository = $permissionRepository;
     }
-
 
     public function __invoke()
     {

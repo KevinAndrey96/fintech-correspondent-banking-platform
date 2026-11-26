@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_product', function (Blueprint $table) {
-            $table->engine="InnoDB";
+            $table->engine = 'InnoDB';
             $table->id();
             /*$table->bigInteger('shopkeeper_id');
             $table->foreign('shopkeeper_id')->references('id')->on('users')->onDelete('cascade');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->String('shopkeeper_quota');*/
             $table->timestamps();
 
-            });
+        });
     }
 
     /**

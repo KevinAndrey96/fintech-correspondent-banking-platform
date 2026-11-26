@@ -7,8 +7,6 @@ use App\Models\Product;
 use App\Models\SupplierProduct;
 use App\Models\User;
 use App\Models\UserTransactionLimit;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ChangeTransactionLimitUsersController extends Controller
 {
@@ -19,7 +17,7 @@ class ChangeTransactionLimitUsersController extends Controller
         $shopkeeperProducts = SupplierProduct::where('user_id', $id)->pluck('product_id')->toArray();
         $products = Product::whereIn('id', $shopkeeperProducts)
             ->where('is_deleted', 0)
-            ->where('is_enabled',1)
+            ->where('is_enabled', 1)
             ->where('giros', 0)
             ->orderBy('priority', 'asc')
             ->get();

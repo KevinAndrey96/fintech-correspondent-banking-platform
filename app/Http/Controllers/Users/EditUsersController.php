@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\UserBank;
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use App\Models\Card;
 use App\Models\ShopkeeperAdviser;
+use App\Models\User;
+use App\Models\UserBank;
 use Spatie\Permission\Models\Role;
 
 class EditUsersController extends Controller

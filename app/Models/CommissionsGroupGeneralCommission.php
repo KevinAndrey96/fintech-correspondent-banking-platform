@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property mixed $comm_group_id
  * @property mixed $gen_comm_id
+ *
  * @method static get()
  * @method static where(string $string)
  */
@@ -17,7 +18,7 @@ class CommissionsGroupGeneralCommission extends Model
 
     protected $fillable = [
         'comm_group_id',
-        'gen_comm_id'
+        'gen_comm_id',
     ];
 
     public function commissionGroup()
@@ -29,5 +30,4 @@ class CommissionsGroupGeneralCommission extends Model
     {
         return $this->belongsTo(GeneralCommission::class, 'gen_comm_id');
     }
-
 }

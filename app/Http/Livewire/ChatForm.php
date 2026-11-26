@@ -7,16 +7,14 @@ use Livewire\Component;
 
 class ChatForm extends Component
 {
-
     public $transactionID;
-    public $message;
 
+    public $message;
 
     public function mount()
     {
         $this->message = '';
     }
-
 
     public function render()
     {
@@ -26,13 +24,13 @@ class ChatForm extends Component
     public function sendMessage()
     {
         $data = [
-            'message'=> $this->message,
+            'message' => $this->message,
             'transactionID' => $this->transactionID,
             'userID' => Auth::user()->id,
-            'userRole' => Auth::user()->role
+            'userRole' => Auth::user()->role,
         ];
 
-        //$this->emit('messageReceived', $data);
+        // $this->emit('messageReceived', $data);
 
         event(new \App\Events\SendMessage($data));
 

@@ -2,17 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
 class ExtraInfoDistributorMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -25,10 +24,9 @@ class ExtraInfoDistributorMiddleware
 
         $user = User::find(Auth::user()->id);
 
-
         if ($user->role == 'Shopkeeper' && $user->extrainfo == 0) {
 
-            $rutName = getenv('RUT_NAME');
+            $rutName = config('platform.rut_name');
 
             return redirect()->route('distributor.extrainfo')->with('rutName', $rutName);
         }

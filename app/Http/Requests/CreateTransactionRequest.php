@@ -36,8 +36,7 @@ class CreateTransactionRequest extends FormRequest
     public function messages()
     {
         return [
-            'required' => 'El :attribute es obligatorio.'
+            'required' => 'El :attribute es obligatorio.',
         ];
     }
-
 }

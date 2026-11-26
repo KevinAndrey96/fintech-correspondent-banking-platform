@@ -37,7 +37,7 @@
                                     <div class="bg-gradient-secondary shadow-primary border-radius-lg py-2 pe-1">
                                 @endif
                                         @if (isset(Auth::user()->brand_id))
-                                <h6 class="text-white font-weight-bolder text-center mt-1 mb-1"><img src="{{getenv('URL_SERVER').Auth::user()->brand->rectangular_logo_url}}" width="70%" height="auto"></h6>
+                                <h6 class="text-white font-weight-bolder text-center mt-1 mb-1"><img src="{{config('services.media_mirror.url').Auth::user()->brand->rectangular_logo_url}}" width="70%" height="auto"></h6>
                                         @else
                                             <h6 class="text-white font-weight-bolder text-center mt-1 mb-1"><img src="/assets/img/LOGO-COMPLETO.png" width="70%" height="auto"></h6>
                                         @endif
@@ -61,7 +61,7 @@
                                                 </div>
                                                 <p>Debe configurar su aplicación Google Authenticator antes de continuar. De lo contrario, no podrá iniciar sesión luego</p>
                                                 <div>
-                                                    <a href="{{ route('complete.registration2') }}" class="btn btn-primary">Continuar</a>
+                                                    <a href="{{ route('home') }}" class="btn btn-primary">Continuar</a>
                                                 </div>
                                             </div>
                                         </div>

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChangeOnlineStatusUsersController extends Controller
 {
@@ -16,10 +16,12 @@ class ChangeOnlineStatusUsersController extends Controller
             if ($user->is_online == 1) {
                 $user->is_online = 0;
                 $user->save();
+
                 return redirect()->back();
             }
             $user->is_online = 1;
             $user->save();
+
             return redirect()->back();
         }
     }

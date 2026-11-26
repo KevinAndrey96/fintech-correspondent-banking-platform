@@ -19,13 +19,13 @@ class UpdateGroupCommissionsController extends Controller
     public function __invoke(Request $request)
     {
         set_time_limit(0);
-        //Here it validates the request
+        // Here it validates the request
         $fields = [
             'name' => 'required|string',
             'products' => 'required',
             'amountsDis' => 'required',
             'amountsShop' => 'required',
-            'commissionsGroupID' => 'required|string'
+            'commissionsGroupID' => 'required|string',
         ];
 
         $message = [
@@ -34,7 +34,7 @@ class UpdateGroupCommissionsController extends Controller
 
         $this->validate($request, $fields, $message);
 
-        //Here mapping $amounts and $products to float array and integer array
+        // Here mapping $amounts and $products to float array and integer array
         $products = Arr::map($request->input('products'), function ($value) {
             return intval($value);
         });
@@ -50,7 +50,7 @@ class UpdateGroupCommissionsController extends Controller
         for ($i = 0; $i < count($amountsDis); $i++) {
             $commission = Commission::where([
                 ['product_id', $products[$i]],
-                ['user_id', Auth::user()->id]
+                ['user_id', Auth::user()->id],
             ])
                 ->first();
 
@@ -60,10 +60,8 @@ class UpdateGroupCommissionsController extends Controller
             }
         }
 
-
-
-        //If exists a commission amount that exceeded its correspondent product commission amount it will return to
-        //create commissions group with error message
+        // If exists a commission amount that exceeded its correspondent product commission amount it will return to
+        // create commissions group with error message
         for ($i = 0; $i < count($amountsDis); $i++) {
             $product = Product::find($products[$i]);
             if ($amountsDis[$i] > $product->product_commission || $amountsShop[$i] > $product->product_commission ||
@@ -74,27 +72,27 @@ class UpdateGroupCommissionsController extends Controller
             }
         }
 
-        //Here we get commissionsGroup register by its id and assigning a new name;
+        // Here we get commissionsGroup register by its id and assigning a new name;
         $commissionsGroup = CommissionsGroup::find(intval($request->input('commissionsGroupID')));
         $commissionsGroup->name = $request->input('name');
         $commissionsGroup->save();
 
         $commissionsGPGeneralCommissions = CommissionsGroupGeneralCommission::where('comm_group_id', $commissionsGroup->id)->get();
 
-        //Delete general commissions of commissions group
+        // Delete general commissions of commissions group
         foreach ($commissionsGPGeneralCommissions as $commission) {
             $commission->delete();
         }
 
-        //Creating registers to general_commissions and commissions_group_general_commissions tables
+        // Creating registers to general_commissions and commissions_group_general_commissions tables
         for ($i = 0; $i < count($products); $i++) {
-            $generalCommission = new GeneralCommission();
+            $generalCommission = new GeneralCommission;
             $generalCommission->product_id = $products[$i];
-            $generalCommission->amount_dis= $amountsDis[$i];
+            $generalCommission->amount_dis = $amountsDis[$i];
             $generalCommission->amount_shop = $amountsShop[$i];
             $generalCommission->save();
 
-            $commGPGralComm = new CommissionsGroupGeneralCommission();
+            $commGPGralComm = new CommissionsGroupGeneralCommission;
             $commGPGralComm->comm_group_id = $commissionsGroup->id;
             $commGPGralComm->gen_comm_id = $generalCommission->id;
             $commGPGralComm->save();
@@ -117,7 +115,7 @@ class UpdateGroupCommissionsController extends Controller
             }
 
             foreach ($commissionsGPGeneralCommissions as $item) {
-                $commission = new Commission();
+                $commission = new Commission;
                 $commission->product_id = $item->generalCommission->product_id;
                 $commission->user_id = $user->id;
                 $commission->amount = $item->generalCommission->amount_dis;
@@ -128,7 +126,7 @@ class UpdateGroupCommissionsController extends Controller
 
                 $commission->save();
 
-                $userProduct = new SupplierProduct();
+                $userProduct = new SupplierProduct;
                 $userProduct->user_id = $user->id;
                 $userProduct->product_id = $item->generalCommission->product_id;
                 $userProduct->save();
@@ -137,5 +135,4 @@ class UpdateGroupCommissionsController extends Controller
 
         return redirect()->route('commissions.groups')->with('successfulCommissionsGroupUpdate', 'Modificación de grupo de comisiones exitosa');
     }
-
 }

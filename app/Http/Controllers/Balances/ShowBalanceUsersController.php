@@ -11,6 +11,7 @@ class ShowBalanceUsersController extends Controller
     public function index(Request $request)
     {
         $users = User::where('role', '=', 'Shopkeeper')->orWhere('role', '=', 'Supplier')->get();
+
         return view('balance.showBalanceUsers', compact('users'));
     }
 }

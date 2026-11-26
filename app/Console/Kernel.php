@@ -9,27 +9,22 @@ class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
-     *
-     * @param Schedule $schedule
-     * @return void
      */
     protected function schedule(Schedule $schedule): void
     {
-        //date_default_timezone_set('America/Bogota');
+        // date_default_timezone_set('America/Bogota');
         $schedule->command('transaction:reassign')
             ->everyMinute()
             ->timezone('America/Bogota')
-            ->emailOutputTo('asparecargas@gmail.com', true);
+            ->emailOutputTo(config('mail.reports_to'), true);
         $schedule->command('mail:supplier-inactivity')
             ->dailyAt('14:00')
             ->timezone('America/Bogota')
-            ->emailOutputTo('asparecargas@gmail.com', true);
+            ->emailOutputTo(config('mail.reports_to'), true);
     }
 
     /**
      * Register the commands for the application.
-     *
-     * @return void
      */
     protected function commands(): void
     {

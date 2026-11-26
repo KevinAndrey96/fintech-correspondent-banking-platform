@@ -10,11 +10,7 @@ class Answer extends Model
     use HasFactory;
 
     protected $fillable = [
-      'answer',
-      'is_deleted'
+        'answer',
+        'is_deleted',
     ];
-
-
-
 }
-

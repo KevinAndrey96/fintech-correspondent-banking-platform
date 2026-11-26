@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class DeleteProductController extends Controller
 {
@@ -15,7 +14,6 @@ class DeleteProductController extends Controller
         $product->save();
 
         return back()->with('satisfactoryProductDisposal', 'Eliminación de producto satisfactoria');
-
 
     }
 }

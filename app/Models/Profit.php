@@ -17,7 +17,8 @@ class Profit extends Model
 {
     use HasFactory;
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
@@ -30,5 +31,4 @@ class Profit extends Model
     {
         return $this->belongsTo(User::class, 'administrator_id');
     }
-
 }

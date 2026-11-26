@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Balances;
 
-use App\Http\Controllers\Controller;
 use App\Exports\SummaryExport;
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use Carbon\Carbon;
 
 class ExcelExportSummaryController extends Controller
 {
@@ -18,6 +16,7 @@ class ExcelExportSummaryController extends Controller
 
         if (isset($request->shopkeeper_id)) {
             $shopkeeper = User::find($request->input('shopkeeper_id'));
+
             return (new SummaryExport)->forDateFrom($dateFrom)->forDateTo($dateTo)->forShopkeeperID($shopkeeper->id)->download('Extracto de '.$shopkeeper->name.'.xlsx');
         }
 

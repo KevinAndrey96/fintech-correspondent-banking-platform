@@ -24,6 +24,10 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'media_mirror' => [
+        'url' => env('URL_SERVER'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
