@@ -57,7 +57,7 @@ class StoreCardsController extends Controller
                     [
                         'name' => 'path',
                         'contents' => 'card_pdf',
-                        ],
+                    ],
                 ],
             ]);
             $card->cardPDF = '/storage/card_pdf/'.$card->id.'.pdf';

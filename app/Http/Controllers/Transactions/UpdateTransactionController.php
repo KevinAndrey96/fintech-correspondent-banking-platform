@@ -68,7 +68,7 @@ class UpdateTransactionController extends Controller
                         [
                             'name' => 'path',
                             'contents' => 'voucher_images',
-                                ],
+                        ],
                     ],
                 ]);
 
